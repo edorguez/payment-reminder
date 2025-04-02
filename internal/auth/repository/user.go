@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
-var collectionName = "user"
+var collectionName = "users"
 
 type UserRepository interface {
 	Create(ctx context.Context, user *models.User) error
