@@ -2,7 +2,10 @@ module github.com/edorguez/payment-reminder
 
 go 1.24.1
 
-require go.mongodb.org/mongo-driver/v2 v2.1.0
+require (
+	go.mongodb.org/mongo-driver v1.17.3
+	go.mongodb.org/mongo-driver/v2 v2.1.0
+)
 
 require (
 	github.com/golang/snappy v0.0.4 // indirect
