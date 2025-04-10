@@ -35,6 +35,10 @@ func (h *UserHandler) FindById(ctx *gin.Context) {
 
 func (h *UserHandler) FindByEmail(ctx *gin.Context) {
 	email := ctx.Query("email")
+	if email == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Email query param is required"})
+		return
+	}
 
 	user := h.service.FindByEmail(ctx, email)
 	if user == nil {
@@ -45,7 +49,7 @@ func (h *UserHandler) FindByEmail(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, user)
 }
 
-func (h *UserHandler) UpdateUser(ctx *gin.Context) {
+func (h *UserHandler) Update(ctx *gin.Context) {
 	type updateUserRequest struct {
 		UserPlanID      int64     `json:"user_plan_id" binding:"required"`
 		Email           string    `json:"email" binding:"required"`
@@ -67,6 +71,19 @@ func (h *UserHandler) UpdateUser(ctx *gin.Context) {
 	}
 
 	err := h.service.Update(ctx, uint(id), &user)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.Status(http.StatusNoContent)
+}
+
+func (h *UserHandler) Delete(ctx *gin.Context) {
+	idParam := ctx.Param("id")
+	id, _ := strconv.ParseUint(idParam, 10, 32)
+
+	err := h.service.Delete(ctx, uint(id))
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
