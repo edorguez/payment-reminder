@@ -1,46 +1,40 @@
-version: '3.9'
-
 services:
-  account-svc:
-      container_name: account-svc
-      image: edorguez/account-svc
-      ports:
-        - "${ACCOUNT_SVC_PORT}:${ACCOUNT_SVC_PORT}"
-      environment:
-        - ENVIRONMENT=production
-      depends_on:
-        - account-db
-      restart: always
-
-  alert-svc:
-      container_name: alert-svc
-      image: edorguez/alert-svc
-      ports:
-        - "${ALERT_SVC_PORT}:${ALERT_SVC_PORT}"
-      environment:
-        - ENVIRONMENT=production
-      depends_on:
-        - alert-db
-      restart: always
+  # account-svc:
+  #     container_name: account-svc
+  #     image: edorguez/account-svc
+  #     ports:
+  #       - "${ACCOUNT_SVC_PORT}:${ACCOUNT_SVC_PORT}"
+  #     env_file:
+  #       - /env/account.env
+  #     depends_on:
+  #       - account-db
+  #     restart: always
+  #
+  # alert-svc:
+  #     container_name: alert-svc
+  #     image: edorguez/alert-svc
+  #     ports:
+  #       - "${ALERT_SVC_PORT}:${ALERT_SVC_PORT}"
+  #     env_file:
+  #       - /env/alert.env
+  #     depends_on:
+  #       - alert-db
+  #     restart: always
 
   account-db:
     container_name: account-db
     image: postgres:17.4
+    env_file:
+      - ./env/account.env
     ports:
-      - "5490:5432"
-    environment:
-      - POSTGRES_DB=${ACCOUNT_SVC_DB}
-      - POSTGRES_USER=${ACCOUNT_SVC_DB_USER}
-      - POSTGRES_PASSWORD=${ACCOUNT_SVC_DB_PASSWORD}
+      - "${ACCOUNT_DB_PORT}:5432"
     restart: always
 
   alert-db:
     container_name: alert-db
     image: postgres:17.4
+    env_file:
+      - ./env/alert.env
     ports:
-      - "5490:5432"
-    environment:
-      - POSTGRES_DB=${ALERT_SVC_DB}
-      - POSTGRES_USER=${ALERT_SVC_DB_USER}
-      - POSTGRES_PASSWORD=${ALERT_SVC_DB_PASSWORD}
+      - "${ALERT_DB_PORT}:5432"
     restart: always
