@@ -3,10 +3,10 @@ package account
 import "github.com/spf13/viper"
 
 type Config struct {
-	Port                string `mapstructure:"PORT"`
-	DBDriver            string `mapstructure:"DB_DRIVER"`
-	DBSourceDevelopment string `mapstructure:"DB_SOURCE_DEVELOPMENT"`
-	DBSourceProduction  string `mapstructure:"DB_SOURCE_PRODUCTION"`
+	Environment           string `mapstructure:"ENVIRONMENT"`
+	Account_Svc_Port      string `mapstructure:"ACCOUNT_SVC_PORT"`
+	DB_Source_Development string `mapstructure:"DB_SOURCE_DEVELOPMENT"`
+	DB_Source_Production  string `mapstructure:"DB_SOURCE_PRODUCTION"`
 }
 
 func LoadConfig() (config Config, err error) {

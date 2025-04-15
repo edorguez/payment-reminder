@@ -12,7 +12,7 @@ func DBConnection(DSN string) (*gorm.DB, error) {
 	if error != nil || DB == nil {
 		log.Fatal(error)
 	} else {
-		log.Println("DB conntected to ", DB)
+		log.Println("- Postgres DB Connected")
 	}
 	return DB, error
 }

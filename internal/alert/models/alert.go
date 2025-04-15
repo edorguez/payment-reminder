@@ -4,8 +4,8 @@ import "time"
 
 type Alert struct {
 	ID              int64         `gorm:"primaryKey;type:bigserial"`
-	UserID          int64         `gorm:"type:bigserial;not null"`
-	AlertTemplateID int64         `gorm:"type:bigserial;not null"`
+	UserID          int64         `gorm:"type:bigint;not null"`
+	AlertTemplateID int64         `gorm:"type:bigint;not null"`
 	Name            string        `gorm:"type:varchar(50);not null"`
 	Description     string        `gorm:"type:varchar(200)"`
 	PhoneNumber     string        `gorm:"type:varchar(20);not null"`
