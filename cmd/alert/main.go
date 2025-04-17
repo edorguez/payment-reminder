@@ -10,6 +10,7 @@ import (
 	"github.com/edorguez/payment-reminder/internal/alert/repository"
 	"github.com/edorguez/payment-reminder/internal/alert/services"
 	"github.com/edorguez/payment-reminder/pkg/database/postgresql"
+	"github.com/edorguez/payment-reminder/pkg/database/redis"
 )
 
 func main() {
@@ -20,11 +21,16 @@ func main() {
 	}
 
 	var dbConnection string
+	var redisUserCacheConnection string
 	if c.Environment == "production" {
 		dbConnection = c.DB_Source_Production
+		redisUserCacheConnection = c.Redis_User_Alert_Cache_Production
 	} else {
 		dbConnection = c.DB_Source_Development
+		redisUserCacheConnection = c.Redis_User_Alert_Cache_Development
 	}
+
+	redis := redis.RedisConnection(redisUserCacheConnection)
 
 	db, err := postgresql.DBConnection(dbConnection)
 	if err != nil {
@@ -33,8 +39,10 @@ func main() {
 
 	models.AutoMigrateModels(db)
 
+	userCacheRepo := repository.NewUserCacheRepository(redis)
+
 	alertRepo := repository.NewAlertRepository(db)
-	alertService := services.NewAlertService(alertRepo)
+	alertService := services.NewAlertService(alertRepo, userCacheRepo)
 	alertHandler := handlers.NewAlertHandler(alertService)
 
 	routes := alert.NewRoutes(*alertHandler)

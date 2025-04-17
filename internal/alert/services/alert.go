@@ -14,12 +14,14 @@ type AlertService interface {
 }
 
 type alertService struct {
-	repo repository.AlertRepository
+	repo          repository.AlertRepository
+	userCacheRepo repository.UserCacheRepository
 }
 
-func NewAlertService(repo repository.AlertRepository) AlertService {
+func NewAlertService(repo repository.AlertRepository, userCacheRepo repository.UserCacheRepository) AlertService {
 	return &alertService{
-		repo: repo,
+		repo:          repo,
+		userCacheRepo: userCacheRepo,
 	}
 }
 
