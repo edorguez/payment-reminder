@@ -10,7 +10,7 @@ import (
 )
 
 type AlertRepository interface {
-	Create(ctx context.Context, alert *models.Alert) error
+	Create(ctx context.Context, alert *models.Alert) (*models.Alert, error)
 	FindByID(ctx context.Context, id uint) (*models.Alert, error)
 	Update(ctx context.Context, id uint, newAlert *models.Alert) error
 	Delete(ctx context.Context, id uint) error
@@ -26,9 +26,13 @@ func NewAlertRepository(DB *gorm.DB) AlertRepository {
 	}
 }
 
-func (r *alertRepository) Create(ctx context.Context, alert *models.Alert) error {
+func (r *alertRepository) Create(ctx context.Context, alert *models.Alert) (*models.Alert, error) {
 	createdAlert := r.DB.Create(alert)
-	return createdAlert.Error
+	if createdAlert.Error != nil {
+		return nil, createdAlert.Error
+	}
+
+	return alert, nil
 }
 
 func (r *alertRepository) FindByID(ctx context.Context, id uint) (*models.Alert, error) {

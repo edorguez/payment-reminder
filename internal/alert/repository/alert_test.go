@@ -55,7 +55,7 @@ func (suite *AlertRepositoryTestSuite) TestCreateAlert() {
 		IsActive:        true,
 	}
 
-	err := suite.repo.Create(ctx, alert)
+	_, err := suite.repo.Create(ctx, alert)
 	assert.NoError(suite.T(), err)
 	assert.NotZero(suite.T(), alert.ID, "Alert ID should not be zero after creation")
 
@@ -68,7 +68,7 @@ func (suite *AlertRepositoryTestSuite) TestCreateAlert() {
 func (suite *AlertRepositoryTestSuite) TestFindByID_Exists() {
 	ctx := context.Background()
 	alert := &models.Alert{Name: "Existing Alert"}
-	err := suite.repo.Create(ctx, alert)
+	_, err := suite.repo.Create(ctx, alert)
 	assert.NoError(suite.T(), err)
 
 	foundAlert, err := suite.repo.FindByID(ctx, uint(alert.ID))
@@ -91,7 +91,7 @@ func (suite *AlertRepositoryTestSuite) TestUpdateAlert_Success() {
 		IsActive:    false,
 		StartAt:     time.Now(),
 	}
-	err := suite.repo.Create(ctx, originalAlert)
+	_, err := suite.repo.Create(ctx, originalAlert)
 	assert.NoError(suite.T(), err)
 
 	newAlertData := &models.Alert{
@@ -125,7 +125,7 @@ func (suite *AlertRepositoryTestSuite) TestUpdateAlert_NotFound() {
 func (suite *AlertRepositoryTestSuite) TestDeleteAlert_Success() {
 	ctx := context.Background()
 	alert := &models.Alert{Name: "Alert to Delete"}
-	err := suite.repo.Create(ctx, alert)
+	_, err := suite.repo.Create(ctx, alert)
 	assert.NoError(suite.T(), err)
 
 	err = suite.repo.Delete(ctx, uint(alert.ID))

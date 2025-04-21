@@ -2,8 +2,12 @@ package services
 
 import (
 	"context"
+
 	models "github.com/edorguez/payment-reminder/internal/account/models"
 	"github.com/edorguez/payment-reminder/internal/account/repository"
+	"github.com/edorguez/payment-reminder/pkg/constants"
+	"github.com/edorguez/payment-reminder/pkg/kafka"
+	"github.com/edorguez/payment-reminder/pkg/kafka/events"
 )
 
 type UserService interface {
@@ -15,7 +19,8 @@ type UserService interface {
 }
 
 type userService struct {
-	repo repository.UserRepository
+	repo     repository.UserRepository
+	producer *kafka.Producer
 }
 
 func NewUserService(repo repository.UserRepository) UserService {
@@ -25,7 +30,18 @@ func NewUserService(repo repository.UserRepository) UserService {
 }
 
 func (s *userService) Create(ctx context.Context, user *models.User) error {
-	return s.repo.Create(ctx, user)
+	user, err := s.repo.Create(ctx, user)
+	if err != nil {
+		return err
+	}
+
+	event := events.UserEvent{
+		EventType: constants.UserCreatedEvent,
+		UserID:    user.ID,
+		Email:     user.Email,
+	}
+
+	return s.producer.SendEvent(event)
 }
 
 func (s *userService) FindByID(ctx context.Context, id uint) (*models.User, error) {

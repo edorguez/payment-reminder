@@ -5,6 +5,7 @@ import (
 
 	config "github.com/edorguez/payment-reminder/configs/alert"
 	"github.com/edorguez/payment-reminder/internal/alert"
+	"github.com/edorguez/payment-reminder/internal/alert/consumer"
 	"github.com/edorguez/payment-reminder/internal/alert/handlers"
 	"github.com/edorguez/payment-reminder/internal/alert/models"
 	"github.com/edorguez/payment-reminder/internal/alert/repository"
@@ -30,21 +31,32 @@ func main() {
 		redisUserCacheConnection = c.Redis_User_Alert_Cache_Development
 	}
 
+	// Start Redis DB
 	redis := redis.RedisConnection(redisUserCacheConnection)
 
+	// Start Portgresql
 	db, err := postgresql.DBConnection(dbConnection)
 	if err != nil {
 		return
 	}
 
+	// Migrate GORM models
 	models.AutoMigrateModels(db)
 
+	// Instanciate repositories and services
 	userCacheRepo := repository.NewUserCacheRepository(redis)
-
 	alertRepo := repository.NewAlertRepository(db)
 	alertService := services.NewAlertService(alertRepo, userCacheRepo)
 	alertHandler := handlers.NewAlertHandler(alertService)
 
+	// Start Kafka consumer
+	consumer := consumer.NewAlertConsumer(userCacheRepo)
+	err = consumer.Start([]string{"0.0.0.0:" + c.Kafka_Port})
+	if err != nil {
+		panic(err)
+	}
+
+	// Start alert routes
 	routes := alert.NewRoutes(*alertHandler)
 	err = routes.Start("0.0.0.0:" + c.Alert_Svc_Port)
 	if err != nil {
