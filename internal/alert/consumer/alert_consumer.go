@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/edorguez/payment-reminder/internal/alert/repository"
+	"github.com/edorguez/payment-reminder/pkg/constants"
 	"github.com/edorguez/payment-reminder/pkg/kafka"
 	"github.com/edorguez/payment-reminder/pkg/kafka/events"
 )
@@ -39,12 +40,22 @@ func (c *AlertConsumer) Start(brokers []string) error {
 func (c *AlertConsumer) consumeMessages(consumer *kafka.Consumer[events.UserEvent]) {
 	err := consumer.Consume(context.Background(), func(event events.UserEvent) {
 
-		// switch event.EventType {
-		// case constants.UserCreatedEvent:
-		// 	// c.userCacheRepo.Create(context.Background(), user repository.UserCache)
-		// case constants.UserDeletedEvent:
-		// 	// c.service.HandleUserDeletion(event.ID)
-		// }
+		switch event.EventType {
+		case constants.UserCreatedEvent:
+			userCache := repository.UserCache{
+				ID:    event.UserID,
+				Email: event.Email,
+			}
+			c.userCacheRepo.Create(context.Background(), userCache)
+		case constants.UserUpdatedEvent:
+			userCache := repository.UserCache{
+				ID:    event.UserID,
+				Email: event.Email,
+			}
+			c.userCacheRepo.Update(context.Background(), userCache)
+		case constants.UserDeletedEvent:
+			c.userCacheRepo.Delete(context.Background(), event.UserID)
+		}
 	})
 
 	if err != nil {

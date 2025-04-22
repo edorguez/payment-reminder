@@ -3,7 +3,7 @@ package models
 import "time"
 
 type AlertTemplate struct {
-	ID          int64     `gorm:"primaryKey;type:bigserial"`
+	ID          int64     `gorm:"primaryKey"`
 	Name        string    `gorm:"type:varchar(50);not null"`
 	Description string    `gorm:"type:varchar(200);not null"`
 	ContentSID  string    `gorm:"type:varchar(34);not null"`
