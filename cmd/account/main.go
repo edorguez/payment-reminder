@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/edorguez/payment-reminder/cmd/worker/producers"
 	config "github.com/edorguez/payment-reminder/configs/account"
 	"github.com/edorguez/payment-reminder/internal/account"
 	"github.com/edorguez/payment-reminder/internal/account/handlers"
@@ -30,6 +31,11 @@ func main() {
 	if err != nil {
 		return
 	}
+
+	if err := producers.InitUserProducer(cfg.Kafka); err != nil {
+		panic(err)
+	}
+	defer producers.CloseUserProducer()
 
 	models.AutoMigrateModels(db)
 

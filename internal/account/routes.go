@@ -26,6 +26,7 @@ func (r *Routes) Start(address string) error {
 func (r *Routes) addUserRoutes() {
 	userGroup := r.router.Group("/api/users")
 	{
+		userGroup.POST("/", r.userHandler.Create)
 		userGroup.GET("/", r.userHandler.FindByEmail)
 		userGroup.GET("/:id", r.userHandler.FindById)
 		userGroup.PUT("/:id", r.userHandler.Update)

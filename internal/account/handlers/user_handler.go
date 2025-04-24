@@ -20,6 +20,33 @@ func NewUserHandler(service services.UserService) *UserHandler {
 	}
 }
 
+func (h *UserHandler) Create(ctx *gin.Context) {
+	type createUserRequest struct {
+		UserPlanID      int64     `json:"user_plan_id" binding:"required"`
+		Email           string    `json:"email" binding:"required"`
+		LastPaymentDate time.Time `json:"last_payment_date" binding:"required"`
+	}
+	var req createUserRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	user := models.User{
+		UserPlanID:      req.UserPlanID,
+		Email:           req.Email,
+		LastPaymentDate: req.LastPaymentDate,
+	}
+
+	err := h.service.Create(ctx, &user)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.Status(http.StatusCreated)
+}
+
 func (h *UserHandler) FindById(ctx *gin.Context) {
 	idParam := ctx.Param("id")
 	id, _ := strconv.ParseUint(idParam, 10, 32)

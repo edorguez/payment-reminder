@@ -23,9 +23,10 @@ type userService struct {
 	producer *kafka.Producer
 }
 
-func NewUserService(repo repository.UserRepository) UserService {
+func NewUserService(repo repository.UserRepository, producer *kafka.Producer) UserService {
 	return &userService{
-		repo: repo,
+		repo:     repo,
+		producer: producer,
 	}
 }
 
