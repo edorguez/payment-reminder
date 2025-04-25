@@ -9,21 +9,21 @@ import (
 	"github.com/edorguez/payment-reminder/pkg/kafka/events"
 )
 
-type AlertConsumer struct {
+type UserConsumer struct {
 	userCacheRepo repository.UserCacheRepository
 	kafkaTopic    string
 	groupID       string
 }
 
-func NewAlertConsumer(userCacheRepo repository.UserCacheRepository) *AlertConsumer {
-	return &AlertConsumer{
+func NewAlertConsumer(userCacheRepo repository.UserCacheRepository) *UserConsumer {
+	return &UserConsumer{
 		userCacheRepo: userCacheRepo,
 		kafkaTopic:    "users",
 		groupID:       "alert-service-group",
 	}
 }
 
-func (c *AlertConsumer) Start(brokers []string) error {
+func (c *UserConsumer) Start(brokers []string) error {
 	consumer, err := kafka.NewConsumer[events.UserEvent](
 		brokers,
 		c.groupID,
@@ -37,7 +37,7 @@ func (c *AlertConsumer) Start(brokers []string) error {
 	return nil
 }
 
-func (c *AlertConsumer) consumeMessages(consumer *kafka.Consumer[events.UserEvent]) {
+func (c *UserConsumer) consumeMessages(consumer *kafka.Consumer[events.UserEvent]) {
 	err := consumer.Consume(context.Background(), func(event events.UserEvent) {
 
 		switch event.EventType {

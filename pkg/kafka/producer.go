@@ -2,7 +2,6 @@ package kafka
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/IBM/sarama"
 )
@@ -35,16 +34,11 @@ func (p *Producer) SendEvent(event any) error {
 		return err
 	}
 
-	fmt.Println("aquii ver")
-	fmt.Println(value)
-	fmt.Println(p.topic)
-	fmt.Println("------")
 	msg := &sarama.ProducerMessage{
 		Topic: p.topic,
 		Value: sarama.ByteEncoder(value),
 	}
 
-	fmt.Println("enviaaa ver")
 	_, _, err = p.producer.SendMessage(msg)
 	return err
 }

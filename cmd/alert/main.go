@@ -51,7 +51,7 @@ func main() {
 
 	// Start Kafka consumer
 	consumer := consumer.NewAlertConsumer(userCacheRepo)
-	err = consumer.Start([]string{"0.0.0.0:" + c.Kafka_Port})
+	err = consumer.Start([]string{"localhost:29092"})
 	if err != nil {
 		panic(err)
 	}

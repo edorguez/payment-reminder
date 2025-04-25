@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 
-	"github.com/edorguez/payment-reminder/cmd/worker/producers"
 	config "github.com/edorguez/payment-reminder/configs/account"
 	"github.com/edorguez/payment-reminder/internal/account"
 	"github.com/edorguez/payment-reminder/internal/account/handlers"
@@ -11,6 +10,7 @@ import (
 	"github.com/edorguez/payment-reminder/internal/account/repository"
 	"github.com/edorguez/payment-reminder/internal/account/services"
 	"github.com/edorguez/payment-reminder/pkg/database/postgresql"
+	"github.com/edorguez/payment-reminder/pkg/kafka"
 )
 
 func main() {
@@ -27,22 +27,27 @@ func main() {
 		dbConnection = c.DB_Source_Development
 	}
 
+	// Start Portgresql
 	db, err := postgresql.DBConnection(dbConnection)
 	if err != nil {
 		return
 	}
 
-	if err := producers.InitUserProducer(cfg.Kafka); err != nil {
+	// Start Kafka producer
+	userProducer, err := kafka.NewProducer([]string{"localhost:29092"}, "users")
+	if err != nil {
 		panic(err)
 	}
-	defer producers.CloseUserProducer()
+	defer userProducer.Close()
 
+	// Migrate GORM models
 	models.AutoMigrateModels(db)
 
 	userRepo := repository.NewUserRepository(db)
-	userService := services.NewUserService(userRepo)
+	userService := services.NewUserService(userRepo, userProducer)
 	userHandler := handlers.NewUserHandler(userService)
 
+	// Start account routes
 	routes := account.NewRoutes(*userHandler)
 	err = routes.Start("0.0.0.0:" + c.Account_Svc_Port)
 	if err != nil {
