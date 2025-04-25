@@ -50,7 +50,7 @@ func main() {
 	alertHandler := handlers.NewAlertHandler(alertService)
 
 	// Start Kafka consumer
-	consumer := consumer.NewAlertConsumer(userCacheRepo)
+	consumer := consumer.NewUserConsumer(userCacheRepo)
 	err = consumer.Start([]string{"localhost:29092"})
 	if err != nil {
 		panic(err)

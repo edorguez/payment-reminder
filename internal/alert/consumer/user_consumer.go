@@ -15,7 +15,7 @@ type UserConsumer struct {
 	groupID       string
 }
 
-func NewAlertConsumer(userCacheRepo repository.UserCacheRepository) *UserConsumer {
+func NewUserConsumer(userCacheRepo repository.UserCacheRepository) *UserConsumer {
 	return &UserConsumer{
 		userCacheRepo: userCacheRepo,
 		kafkaTopic:    "users",
