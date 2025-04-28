@@ -11,10 +11,10 @@ import (
 
 type UserRepository interface {
 	Create(ctx context.Context, user *models.User) (*models.User, error)
-	FindByID(ctx context.Context, id uint) (*models.User, error)
+	FindByID(ctx context.Context, id int64) (*models.User, error)
 	FindByEmail(ctx context.Context, email string) *models.User
-	Update(ctx context.Context, id uint, newUser *models.User) error
-	Delete(ctx context.Context, id uint) error
+	Update(ctx context.Context, id int64, newUser *models.User) error
+	Delete(ctx context.Context, id int64) error
 }
 
 type userRepository struct {
@@ -36,7 +36,7 @@ func (r *userRepository) Create(ctx context.Context, user *models.User) (*models
 	return user, nil
 }
 
-func (r *userRepository) FindByID(ctx context.Context, id uint) (*models.User, error) {
+func (r *userRepository) FindByID(ctx context.Context, id int64) (*models.User, error) {
 	var user models.User
 
 	r.DB.First(&user, id)
@@ -58,7 +58,7 @@ func (r *userRepository) FindByEmail(ctx context.Context, email string) *models.
 	return &users[0]
 }
 
-func (r *userRepository) Update(ctx context.Context, id uint, newUser *models.User) error {
+func (r *userRepository) Update(ctx context.Context, id int64, newUser *models.User) error {
 	var oldUser models.User
 
 	r.DB.First(&oldUser, id)
@@ -75,7 +75,7 @@ func (r *userRepository) Update(ctx context.Context, id uint, newUser *models.Us
 	return nil
 }
 
-func (r *userRepository) Delete(ctx context.Context, id uint) error {
+func (r *userRepository) Delete(ctx context.Context, id int64) error {
 	var user models.User
 
 	r.DB.First(&user, id)

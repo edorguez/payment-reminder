@@ -12,10 +12,10 @@ import (
 
 type UserService interface {
 	Create(ctx context.Context, user *models.User) error
-	FindByID(ctx context.Context, id uint) (*models.User, error)
+	FindByID(ctx context.Context, id int64) (*models.User, error)
 	FindByEmail(ctx context.Context, email string) *models.User
-	Update(ctx context.Context, id uint, newUser *models.User) error
-	Delete(ctx context.Context, id uint) error
+	Update(ctx context.Context, id int64, newUser *models.User) error
+	Delete(ctx context.Context, id int64) error
 }
 
 type userService struct {
@@ -45,7 +45,7 @@ func (s *userService) Create(ctx context.Context, user *models.User) error {
 	return s.producer.SendEvent(event)
 }
 
-func (s *userService) FindByID(ctx context.Context, id uint) (*models.User, error) {
+func (s *userService) FindByID(ctx context.Context, id int64) (*models.User, error) {
 	return s.repo.FindByID(ctx, id)
 }
 
@@ -53,10 +53,31 @@ func (s *userService) FindByEmail(ctx context.Context, email string) *models.Use
 	return s.repo.FindByEmail(ctx, email)
 }
 
-func (s *userService) Update(ctx context.Context, id uint, newUser *models.User) error {
-	return s.repo.Update(ctx, id, newUser)
+func (s *userService) Update(ctx context.Context, id int64, newUser *models.User) error {
+	err := s.repo.Update(ctx, id, newUser)
+	if err != nil {
+		return err
+	}
+
+	event := events.UserEvent{
+		EventType: constants.UserUpdatedEvent,
+		UserID:    id,
+		Email:     newUser.Email,
+	}
+
+	return s.producer.SendEvent(event)
 }
 
-func (s *userService) Delete(ctx context.Context, id uint) error {
-	return s.repo.Delete(ctx, id)
+func (s *userService) Delete(ctx context.Context, id int64) error {
+	err := s.repo.Delete(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	event := events.UserEvent{
+		EventType: constants.UserDeletedEvent,
+		UserID:    id,
+	}
+
+	return s.producer.SendEvent(event)
 }
