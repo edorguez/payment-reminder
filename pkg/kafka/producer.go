@@ -40,6 +40,7 @@ func (p *Producer) SendEvent(event any) error {
 	}
 
 	_, _, err = p.producer.SendMessage(msg)
+
 	return err
 }
 
