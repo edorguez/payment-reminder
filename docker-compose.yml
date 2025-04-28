@@ -55,6 +55,8 @@ services:
       - ./env/account.env
     ports:
       - "${ACCOUNT_DB_PORT}:5432"
+    volumes:
+      - account-db-data:/var/lib/postgresql/data
     restart: always
 
   alert-db:
@@ -64,6 +66,8 @@ services:
       - ./env/alert.env
     ports:
       - "${ALERT_DB_PORT}:5432"
+    volumes:
+      - alert-db-data:/var/lib/postgresql/data 
     restart: always
 
   alert-user-cache:
@@ -71,4 +75,11 @@ services:
     image: redis:7.4.2
     ports:
       - "${ALERT_USER_CACHE_REDIS_PORT}:6379"
+    volumes:
+      - alert-user-cache-data:/data
     restart: always
+
+volumes:
+  account-db-data:
+  alert-db-data:
+  alert-user-cache-data:
