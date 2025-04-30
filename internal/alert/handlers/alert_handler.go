@@ -1,12 +1,15 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/edorguez/payment-reminder/internal/alert/models"
 	"github.com/edorguez/payment-reminder/internal/alert/services"
+	customerrors "github.com/edorguez/payment-reminder/pkg/core/errors"
+	"github.com/edorguez/payment-reminder/pkg/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -64,7 +67,13 @@ func (h *AlertHandler) FindById(ctx *gin.Context) {
 
 	alert, err := h.service.FindByID(ctx, uint(id))
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": err})
+		var customErr *customerrors.Error
+		if errors.As(err, &customErr) {
+			status := utils.MapCodeToHTTPStatus(customErr.Err)
+			ctx.JSON(status, gin.H{"error": customErr.Message})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
 

@@ -2,10 +2,10 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	models "github.com/edorguez/payment-reminder/internal/alert/models"
+	"github.com/edorguez/payment-reminder/pkg/core/errors"
 	"gorm.io/gorm"
 )
 
@@ -29,7 +29,7 @@ func NewAlertRepository(DB *gorm.DB) AlertRepository {
 func (r *alertRepository) Create(ctx context.Context, alert *models.Alert) (*models.Alert, error) {
 	createdAlert := r.DB.Create(alert)
 	if createdAlert.Error != nil {
-		return nil, createdAlert.Error
+		return nil, &errors.Error{Err: errors.ErrGeneral, Message: createdAlert.Error.Error()}
 	}
 
 	return alert, nil
@@ -40,7 +40,7 @@ func (r *alertRepository) FindByID(ctx context.Context, id uint) (*models.Alert,
 
 	r.DB.First(&alert, id)
 	if alert.ID == 0 {
-		return nil, fmt.Errorf("Alert not found")
+		return nil, &errors.Error{Err: errors.ErrNotFound, Message: "Alert not found"}
 	}
 
 	return &alert, nil
@@ -52,7 +52,7 @@ func (r *alertRepository) Update(ctx context.Context, id uint, newAlert *models.
 	r.DB.First(&oldAlert, id)
 
 	if oldAlert.ID == 0 {
-		return fmt.Errorf("Alert not found")
+		return &errors.Error{Err: errors.ErrNotFound, Message: "Alert not found"}
 	}
 
 	oldAlert.AlertTemplateID = newAlert.AlertTemplateID
@@ -73,7 +73,7 @@ func (r *alertRepository) Delete(ctx context.Context, id uint) error {
 	r.DB.First(&alert, id)
 
 	if alert.ID == 0 {
-		return fmt.Errorf("Alert not found")
+		return &errors.Error{Err: errors.ErrNotFound, Message: "Alert not found"}
 	}
 
 	r.DB.Unscoped().Delete(&alert)
