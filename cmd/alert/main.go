@@ -46,7 +46,8 @@ func main() {
 	// Instanciate repositories and services
 	userCacheRepo := repository.NewUserCacheRepository(redis)
 	alertRepo := repository.NewAlertRepository(db)
-	alertService := services.NewAlertService(alertRepo, userCacheRepo)
+	alertTemplateRepo := repository.NewAlertTemplateRepository(db)
+	alertService := services.NewAlertService(alertRepo, alertTemplateRepo, userCacheRepo)
 	alertHandler := handlers.NewAlertHandler(alertService)
 
 	// Start Kafka consumer
