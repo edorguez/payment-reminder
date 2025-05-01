@@ -63,9 +63,9 @@ func (h *AlertHandler) Create(ctx *gin.Context) {
 
 func (h *AlertHandler) FindById(ctx *gin.Context) {
 	idParam := ctx.Param("id")
-	id, _ := strconv.ParseUint(idParam, 10, 32)
+	id, _ := strconv.ParseInt(idParam, 10, 64)
 
-	alert, err := h.service.FindByID(ctx, uint(id))
+	alert, err := h.service.FindByID(ctx, id)
 	if err != nil {
 		var customErr *customerrors.Error
 		if errors.As(err, &customErr) {
@@ -73,7 +73,7 @@ func (h *AlertHandler) FindById(ctx *gin.Context) {
 			ctx.JSON(status, gin.H{"error": customErr.Message})
 			return
 		}
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -98,7 +98,7 @@ func (h *AlertHandler) Update(ctx *gin.Context) {
 	}
 
 	idParam := ctx.Param("id")
-	id, _ := strconv.ParseUint(idParam, 10, 32)
+	id, _ := strconv.ParseInt(idParam, 10, 64)
 
 	alert := models.Alert{
 		AlertTemplateID: req.AlertTemplateID,
@@ -110,8 +110,14 @@ func (h *AlertHandler) Update(ctx *gin.Context) {
 		IsActive:        req.IsActive,
 	}
 
-	err := h.service.Update(ctx, uint(id), &alert)
+	err := h.service.Update(ctx, id, &alert)
 	if err != nil {
+		var customErr *customerrors.Error
+		if errors.As(err, &customErr) {
+			status := utils.MapCodeToHTTPStatus(customErr.Err)
+			ctx.JSON(status, gin.H{"error": customErr.Message})
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -121,10 +127,16 @@ func (h *AlertHandler) Update(ctx *gin.Context) {
 
 func (h *AlertHandler) Delete(ctx *gin.Context) {
 	idParam := ctx.Param("id")
-	id, _ := strconv.ParseUint(idParam, 10, 32)
+	id, _ := strconv.ParseInt(idParam, 10, 64)
 
-	err := h.service.Delete(ctx, uint(id))
+	err := h.service.Delete(ctx, id)
 	if err != nil {
+		var customErr *customerrors.Error
+		if errors.As(err, &customErr) {
+			status := utils.MapCodeToHTTPStatus(customErr.Err)
+			ctx.JSON(status, gin.H{"error": customErr.Message})
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

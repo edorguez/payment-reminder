@@ -6,6 +6,7 @@ import (
 	models "github.com/edorguez/payment-reminder/internal/account/models"
 	"github.com/edorguez/payment-reminder/internal/account/repository"
 	"github.com/edorguez/payment-reminder/pkg/constants"
+	"github.com/edorguez/payment-reminder/pkg/core/errors"
 	"github.com/edorguez/payment-reminder/pkg/kafka"
 	"github.com/edorguez/payment-reminder/pkg/kafka/events"
 )
@@ -42,7 +43,11 @@ func (s *userService) Create(ctx context.Context, user *models.User) error {
 		Email:     user.Email,
 	}
 
-	return s.producer.SendEvent(event)
+	if err = s.producer.SendEvent(event); err != nil {
+		return &errors.Error{Err: errors.ErrPublishEvent, Message: err.Error()}
+	}
+
+	return nil
 }
 
 func (s *userService) FindByID(ctx context.Context, id int64) (*models.User, error) {
@@ -65,7 +70,11 @@ func (s *userService) Update(ctx context.Context, id int64, newUser *models.User
 		Email:     newUser.Email,
 	}
 
-	return s.producer.SendEvent(event)
+	if err = s.producer.SendEvent(event); err != nil {
+		return &errors.Error{Err: errors.ErrPublishEvent, Message: err.Error()}
+	}
+
+	return nil
 }
 
 func (s *userService) Delete(ctx context.Context, id int64) error {
@@ -79,5 +88,9 @@ func (s *userService) Delete(ctx context.Context, id int64) error {
 		UserID:    id,
 	}
 
-	return s.producer.SendEvent(event)
+	if err = s.producer.SendEvent(event); err != nil {
+		return &errors.Error{Err: errors.ErrPublishEvent, Message: err.Error()}
+	}
+
+	return nil
 }

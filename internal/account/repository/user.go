@@ -2,10 +2,10 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	models "github.com/edorguez/payment-reminder/internal/account/models"
+	"github.com/edorguez/payment-reminder/pkg/core/errors"
 	"gorm.io/gorm"
 )
 
@@ -30,7 +30,7 @@ func NewUserRepository(DB *gorm.DB) UserRepository {
 func (r *userRepository) Create(ctx context.Context, user *models.User) (*models.User, error) {
 	createdUser := r.DB.Create(user)
 	if createdUser.Error != nil {
-		return nil, createdUser.Error
+		return nil, &errors.Error{Err: errors.ErrGeneral, Message: createdUser.Error.Error()}
 	}
 
 	return user, nil
@@ -41,7 +41,7 @@ func (r *userRepository) FindByID(ctx context.Context, id int64) (*models.User, 
 
 	r.DB.First(&user, id)
 	if user.ID == 0 {
-		return nil, fmt.Errorf("User not found")
+		return nil, &errors.Error{Err: errors.ErrNotFound, Message: "User not found"}
 	}
 
 	return &user, nil
@@ -64,7 +64,7 @@ func (r *userRepository) Update(ctx context.Context, id int64, newUser *models.U
 	r.DB.First(&oldUser, id)
 
 	if oldUser.ID == 0 {
-		return fmt.Errorf("User not found")
+		return &errors.Error{Err: errors.ErrNotFound, Message: "User not found"}
 	}
 
 	oldUser.UserPlanID = newUser.UserPlanID
@@ -81,7 +81,7 @@ func (r *userRepository) Delete(ctx context.Context, id int64) error {
 	r.DB.First(&user, id)
 
 	if user.ID == 0 {
-		return fmt.Errorf("User not found")
+		return &errors.Error{Err: errors.ErrNotFound, Message: "User not found"}
 	}
 
 	r.DB.Unscoped().Delete(&user)

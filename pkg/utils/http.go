@@ -14,6 +14,10 @@ func MapCodeToHTTPStatus(err error) int {
 		return http.StatusBadRequest
 	case errors.Is(err, customerrors.ErrConflict):
 		return http.StatusConflict
+	case errors.Is(err, customerrors.ErrPublishEvent):
+		return http.StatusInternalServerError
+	case errors.Is(err, customerrors.ErrConsumeEvent):
+		return http.StatusInternalServerError
 	default:
 		return http.StatusInternalServerError
 	}

@@ -11,9 +11,9 @@ import (
 
 type AlertRepository interface {
 	Create(ctx context.Context, alert *models.Alert) (*models.Alert, error)
-	FindByID(ctx context.Context, id uint) (*models.Alert, error)
-	Update(ctx context.Context, id uint, newAlert *models.Alert) error
-	Delete(ctx context.Context, id uint) error
+	FindByID(ctx context.Context, id int64) (*models.Alert, error)
+	Update(ctx context.Context, id int64, newAlert *models.Alert) error
+	Delete(ctx context.Context, id int64) error
 }
 
 type alertRepository struct {
@@ -35,7 +35,7 @@ func (r *alertRepository) Create(ctx context.Context, alert *models.Alert) (*mod
 	return alert, nil
 }
 
-func (r *alertRepository) FindByID(ctx context.Context, id uint) (*models.Alert, error) {
+func (r *alertRepository) FindByID(ctx context.Context, id int64) (*models.Alert, error) {
 	var alert models.Alert
 
 	r.DB.First(&alert, id)
@@ -46,7 +46,7 @@ func (r *alertRepository) FindByID(ctx context.Context, id uint) (*models.Alert,
 	return &alert, nil
 }
 
-func (r *alertRepository) Update(ctx context.Context, id uint, newAlert *models.Alert) error {
+func (r *alertRepository) Update(ctx context.Context, id int64, newAlert *models.Alert) error {
 	var oldAlert models.Alert
 
 	r.DB.First(&oldAlert, id)
@@ -67,7 +67,7 @@ func (r *alertRepository) Update(ctx context.Context, id uint, newAlert *models.
 	return nil
 }
 
-func (r *alertRepository) Delete(ctx context.Context, id uint) error {
+func (r *alertRepository) Delete(ctx context.Context, id int64) error {
 	var alert models.Alert
 
 	r.DB.First(&alert, id)

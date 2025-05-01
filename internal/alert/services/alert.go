@@ -8,9 +8,9 @@ import (
 
 type AlertService interface {
 	Create(ctx context.Context, alert *models.Alert) error
-	FindByID(ctx context.Context, id uint) (*models.Alert, error)
-	Update(ctx context.Context, id uint, newUser *models.Alert) error
-	Delete(ctx context.Context, id uint) error
+	FindByID(ctx context.Context, id int64) (*models.Alert, error)
+	Update(ctx context.Context, id int64, newUser *models.Alert) error
+	Delete(ctx context.Context, id int64) error
 }
 
 type alertService struct {
@@ -30,14 +30,14 @@ func (s *alertService) Create(ctx context.Context, alert *models.Alert) error {
 	return err
 }
 
-func (s *alertService) FindByID(ctx context.Context, id uint) (*models.Alert, error) {
+func (s *alertService) FindByID(ctx context.Context, id int64) (*models.Alert, error) {
 	return s.repo.FindByID(ctx, id)
 }
 
-func (s *alertService) Update(ctx context.Context, id uint, newAlert *models.Alert) error {
+func (s *alertService) Update(ctx context.Context, id int64, newAlert *models.Alert) error {
 	return s.repo.Update(ctx, id, newAlert)
 }
 
-func (s *alertService) Delete(ctx context.Context, id uint) error {
+func (s *alertService) Delete(ctx context.Context, id int64) error {
 	return s.repo.Delete(ctx, id)
 }

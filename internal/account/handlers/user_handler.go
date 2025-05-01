@@ -1,12 +1,15 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/edorguez/payment-reminder/internal/account/models"
 	"github.com/edorguez/payment-reminder/internal/account/services"
+	customerrors "github.com/edorguez/payment-reminder/pkg/core/errors"
+	"github.com/edorguez/payment-reminder/pkg/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -40,6 +43,12 @@ func (h *UserHandler) Create(ctx *gin.Context) {
 
 	err := h.service.Create(ctx, &user)
 	if err != nil {
+		var customErr *customerrors.Error
+		if errors.As(err, &customErr) {
+			status := utils.MapCodeToHTTPStatus(customErr.Err)
+			ctx.JSON(status, gin.H{"error": customErr.Message})
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -49,11 +58,17 @@ func (h *UserHandler) Create(ctx *gin.Context) {
 
 func (h *UserHandler) FindById(ctx *gin.Context) {
 	idParam := ctx.Param("id")
-	id, _ := strconv.ParseUint(idParam, 10, 32)
+	id, _ := strconv.ParseInt(idParam, 10, 64)
 
-	user, err := h.service.FindByID(ctx, uint(id))
+	user, err := h.service.FindByID(ctx, id)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": err})
+		var customErr *customerrors.Error
+		if errors.As(err, &customErr) {
+			status := utils.MapCodeToHTTPStatus(customErr.Err)
+			ctx.JSON(status, gin.H{"error": customErr.Message})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -89,7 +104,7 @@ func (h *UserHandler) Update(ctx *gin.Context) {
 	}
 
 	idParam := ctx.Param("id")
-	id, _ := strconv.ParseUint(idParam, 10, 32)
+	id, _ := strconv.ParseInt(idParam, 10, 64)
 
 	user := models.User{
 		UserPlanID:      req.UserPlanID,
@@ -97,8 +112,14 @@ func (h *UserHandler) Update(ctx *gin.Context) {
 		LastPaymentDate: req.LastPaymentDate,
 	}
 
-	err := h.service.Update(ctx, uint(id), &user)
+	err := h.service.Update(ctx, id, &user)
 	if err != nil {
+		var customErr *customerrors.Error
+		if errors.As(err, &customErr) {
+			status := utils.MapCodeToHTTPStatus(customErr.Err)
+			ctx.JSON(status, gin.H{"error": customErr.Message})
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -108,10 +129,16 @@ func (h *UserHandler) Update(ctx *gin.Context) {
 
 func (h *UserHandler) Delete(ctx *gin.Context) {
 	idParam := ctx.Param("id")
-	id, _ := strconv.ParseUint(idParam, 10, 32)
+	id, _ := strconv.ParseInt(idParam, 10, 64)
 
-	err := h.service.Delete(ctx, uint(id))
+	err := h.service.Delete(ctx, id)
 	if err != nil {
+		var customErr *customerrors.Error
+		if errors.As(err, &customErr) {
+			status := utils.MapCodeToHTTPStatus(customErr.Err)
+			ctx.JSON(status, gin.H{"error": customErr.Message})
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
