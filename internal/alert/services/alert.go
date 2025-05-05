@@ -28,7 +28,13 @@ func NewAlertService(repo repository.AlertRepository, alertTemplateRepo reposito
 }
 
 func (s *alertService) Create(ctx context.Context, alert *models.Alert) error {
-	_, err := s.repo.Create(ctx, alert)
+	_, err := s.userCacheRepo.FindByID(ctx, alert.UserID)
+	if err != nil {
+		return err
+	}
+
+	_, err = s.repo.Create(ctx, alert)
+
 	return err
 }
 
@@ -37,6 +43,10 @@ func (s *alertService) FindByID(ctx context.Context, id int64) (*models.Alert, e
 }
 
 func (s *alertService) Update(ctx context.Context, id int64, newAlert *models.Alert) error {
+	_, err := s.userCacheRepo.FindByID(ctx, newAlert.UserID)
+	if err != nil {
+		return err
+	}
 	return s.repo.Update(ctx, id, newAlert)
 }
 
