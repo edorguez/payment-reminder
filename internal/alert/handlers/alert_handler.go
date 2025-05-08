@@ -30,7 +30,7 @@ func (h *AlertHandler) Create(ctx *gin.Context) {
 		Name            string    `json:"name" binding:"required"`
 		Description     string    `json:"description" binding:"required"`
 		PhoneNumber     string    `json:"phone_number" binding:"required"`
-		HourConcurrence uint16    `json:"hour_concurrence" binding:"required"`
+		HourConcurrence *uint16   `json:"hour_concurrence" binding:"required"`
 		StartAt         time.Time `json:"start_at" biding:"required"`
 		IsActive        bool      `json:"is_active" binding:"required"`
 	}
@@ -86,7 +86,7 @@ func (h *AlertHandler) Update(ctx *gin.Context) {
 		Name            string    `json:"name" binding:"required"`
 		Description     string    `json:"description" binding:"required"`
 		PhoneNumber     string    `json:"phone_number" binding:"required"`
-		HourConcurrence uint16    `json:"hour_concurrence" binding:"required"`
+		HourConcurrence *uint16   `json:"hour_concurrence" binding:"required"`
 		StartAt         time.Time `json:"start_at" biding:"required"`
 		IsActive        bool      `json:"is_active" binding:"required"`
 	}

@@ -33,6 +33,11 @@ func (s *alertService) Create(ctx context.Context, alert *models.Alert) error {
 		return err
 	}
 
+	_, err = s.alertTemplateRepo.FindByID(ctx, alert.AlertTemplateID)
+	if err != nil {
+		return err
+	}
+
 	_, err = s.repo.Create(ctx, alert)
 
 	return err
@@ -47,6 +52,12 @@ func (s *alertService) Update(ctx context.Context, id int64, newAlert *models.Al
 	if err != nil {
 		return err
 	}
+
+	_, err = s.alertTemplateRepo.FindByID(ctx, newAlert.AlertTemplateID)
+	if err != nil {
+		return err
+	}
+
 	return s.repo.Update(ctx, id, newAlert)
 }
 
