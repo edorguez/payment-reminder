@@ -2,7 +2,9 @@ package services
 
 import (
 	"context"
+	"time"
 
+	"firebase.google.com/go/v4/auth"
 	models "github.com/edorguez/payment-reminder/internal/account/models"
 	"github.com/edorguez/payment-reminder/internal/account/repository"
 	"github.com/edorguez/payment-reminder/pkg/constants"
@@ -12,7 +14,7 @@ import (
 )
 
 type UserService interface {
-	Create(ctx context.Context, user *models.User) error
+	Create(ctx context.Context, email string, password string, userPlanId int64) error
 	FindByID(ctx context.Context, id int64) (*models.User, error)
 	FindByEmail(ctx context.Context, email string) *models.User
 	Update(ctx context.Context, id int64, newUser *models.User) error
@@ -21,18 +23,38 @@ type UserService interface {
 
 type userService struct {
 	repo     repository.UserRepository
+	firebase *auth.Client
 	producer *kafka.Producer
 }
 
-func NewUserService(repo repository.UserRepository, producer *kafka.Producer) UserService {
+func NewUserService(repo repository.UserRepository, firebase *auth.Client, producer *kafka.Producer) UserService {
 	return &userService{
 		repo:     repo,
+		firebase: firebase,
 		producer: producer,
 	}
 }
 
-func (s *userService) Create(ctx context.Context, user *models.User) error {
-	user, err := s.repo.Create(ctx, user)
+func (s *userService) Create(ctx context.Context, email string, password string, userPlanId int64) error {
+	params := (&auth.UserToCreate{}).
+		Email(email).
+		Password(password).
+		EmailVerified(false).
+		Disabled(false)
+
+	firebaseRes, err := s.firebase.CreateUser(context.Background(), params)
+	if err != nil {
+		return &errors.Error{Err: errors.ErrFirebase, Message: err.Error()}
+	}
+
+	u := &models.User{
+		FirebaseUID:     firebaseRes.UID,
+		UserPlanID:      userPlanId,
+		Email:           email,
+		LastPaymentDate: time.Now().UTC(),
+	}
+
+	user, err := s.repo.Create(ctx, u)
 	if err != nil {
 		return err
 	}

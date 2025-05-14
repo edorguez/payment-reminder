@@ -18,6 +18,8 @@ func MapCodeToHTTPStatus(err error) int {
 		return http.StatusInternalServerError
 	case errors.Is(err, customerrors.ErrConsumeEvent):
 		return http.StatusInternalServerError
+	case errors.Is(err, customerrors.ErrFirebase):
+		return http.StatusInternalServerError
 	default:
 		return http.StatusInternalServerError
 	}

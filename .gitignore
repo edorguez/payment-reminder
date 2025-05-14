@@ -20,3 +20,6 @@
 !/env/example.env
 !/env/example.env
 !/env/example.*.env
+
+# Firebase
+firebase-adminsdk.json

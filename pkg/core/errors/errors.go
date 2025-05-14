@@ -9,6 +9,7 @@ var (
 	ErrInvalidInput = fmt.Errorf("INVALID_INPUT")
 	ErrPublishEvent = fmt.Errorf("PUBLISH_EVENT")
 	ErrConsumeEvent = fmt.Errorf("CONSUME_EVENT")
+	ErrFirebase     = fmt.Errorf("ERROR_FIREBASE")
 )
 
 type Error struct {
@@ -19,11 +20,3 @@ type Error struct {
 func (e *Error) Error() string {
 	return fmt.Sprintf("%s: %v", e.Message, e.Err)
 }
-
-// func (e *Error) Is(target error) bool {
-// 	t, ok := target.(*Error)
-// 	if !ok {
-// 		return false
-// 	}
-// 	return e.Err == t.Err
-// }

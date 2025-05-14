@@ -25,9 +25,9 @@ func NewUserHandler(service services.UserService) *UserHandler {
 
 func (h *UserHandler) Create(ctx *gin.Context) {
 	type createUserRequest struct {
-		UserPlanID      int64     `json:"user_plan_id" binding:"required"`
-		Email           string    `json:"email" binding:"required"`
-		LastPaymentDate time.Time `json:"last_payment_date" binding:"required"`
+		UserPlanID int64  `json:"user_plan_id" binding:"required"`
+		Email      string `json:"email" binding:"required"`
+		Password   string `json:"password" binding:"required"`
 	}
 	var req createUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -35,13 +35,7 @@ func (h *UserHandler) Create(ctx *gin.Context) {
 		return
 	}
 
-	user := models.User{
-		UserPlanID:      req.UserPlanID,
-		Email:           req.Email,
-		LastPaymentDate: req.LastPaymentDate,
-	}
-
-	err := h.service.Create(ctx, &user)
+	err := h.service.Create(ctx, req.Email, req.Password, req.UserPlanID)
 	if err != nil {
 		var customErr *customerrors.Error
 		if errors.As(err, &customErr) {
@@ -93,9 +87,8 @@ func (h *UserHandler) FindByEmail(ctx *gin.Context) {
 
 func (h *UserHandler) Update(ctx *gin.Context) {
 	type updateUserRequest struct {
-		UserPlanID      int64     `json:"user_plan_id" binding:"required"`
-		Email           string    `json:"email" binding:"required"`
-		LastPaymentDate time.Time `json:"last_payment_date" binding:"required"`
+		UserPlanID int64  `json:"user_plan_id" binding:"required"`
+		Email      string `json:"email" binding:"required"`
 	}
 	var req updateUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -107,9 +100,8 @@ func (h *UserHandler) Update(ctx *gin.Context) {
 	id, _ := strconv.ParseInt(idParam, 10, 64)
 
 	user := models.User{
-		UserPlanID:      req.UserPlanID,
-		Email:           req.Email,
-		LastPaymentDate: req.LastPaymentDate,
+		UserPlanID: req.UserPlanID,
+		Email:      req.Email,
 	}
 
 	err := h.service.Update(ctx, id, &user)

@@ -4,6 +4,7 @@ import "time"
 
 type User struct {
 	ID              int64     `gorm:"primaryKey"`
+	FirebaseUID     string    `gorm:"not null"`
 	UserPlanID      int64     `gorm:"type:bigint;not null"`
 	Email           string    `gorm:"type:varchar(100);not null;unique_index"`
 	LastPaymentDate time.Time `gorm:"type:timestamptz;not null"`
