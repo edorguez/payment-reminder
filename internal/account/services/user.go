@@ -19,6 +19,7 @@ type UserService interface {
 	FindByEmail(ctx context.Context, email string) *models.User
 	Update(ctx context.Context, id int64, newUser *models.User) error
 	Delete(ctx context.Context, id int64) error
+	VerifyToken(ctx context.Context, token string) (string, error)
 }
 
 type userService struct {
@@ -115,4 +116,12 @@ func (s *userService) Delete(ctx context.Context, id int64) error {
 	}
 
 	return nil
+}
+
+func (s *userService) VerifyToken(ctx context.Context, token string) (string, error) {
+	t, err := s.firebase.VerifyIDToken(ctx, token)
+	if err != nil {
+		return "", &errors.Error{Err: errors.ErrFirebase, Message: err.Error()}
+	}
+	return t.UID, nil
 }

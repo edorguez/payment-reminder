@@ -28,6 +28,7 @@ func (r *Routes) addUserRoutes() {
 	{
 		userGroup.POST("/", r.userHandler.Create)
 		userGroup.GET("/", r.userHandler.FindByEmail)
+		userGroup.GET("/verify", r.userHandler.FindByEmail)
 		userGroup.GET("/:id", r.userHandler.FindById)
 		userGroup.PUT("/:id", r.userHandler.Update)
 		userGroup.DELETE("/:id", r.userHandler.Delete)

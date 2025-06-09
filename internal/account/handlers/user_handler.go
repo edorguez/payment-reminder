@@ -136,3 +136,25 @@ func (h *UserHandler) Delete(ctx *gin.Context) {
 
 	ctx.Status(http.StatusNoContent)
 }
+
+func (h *UserHandler) VerifyToken(ctx *gin.Context) {
+	token := ctx.Request.Header.Get("Authorization")
+	if token == "" {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "missing authorization token"})
+		return
+	}
+
+	uid, err := h.service.VerifyToken(ctx, token)
+	if err != nil {
+		var customErr *customerrors.Error
+		if errors.As(err, &customErr) {
+			status := utils.MapCodeToHTTPStatus(customErr.Err)
+			ctx.JSON(status, gin.H{"error": customErr.Message})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, uid)
+}
