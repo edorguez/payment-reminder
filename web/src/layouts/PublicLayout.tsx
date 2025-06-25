@@ -5,7 +5,7 @@ const PublicLayout = () => {
 
   return (
     <div>
-      <nav style={{ background: '#f0f0f0', padding: '1rem' }}>
+      <nav style={{ padding: '1rem' }}>
         <ul style={{ display: 'flex', gap: '1rem', listStyle: 'none', padding: 0 }}>
           <li>
             <Link to="/" style={{ fontWeight: location.pathname === '/' ? 'bold' : 'normal' }}>

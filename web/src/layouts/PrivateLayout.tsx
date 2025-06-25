@@ -11,7 +11,7 @@ const PrivateLayout = () => {
 
   return (
     <div>
-      <nav style={{ background: '#e0e0ff', padding: '1rem' }}>
+      <nav style={{ padding: '1rem' }}>
         <ul style={{ display: 'flex', gap: '1rem', listStyle: 'none', padding: 0 }}>
           <li>
             <Link to="/dashboard" style={{ fontWeight: location.pathname === '/dashboard' ? 'bold' : 'normal' }}>
