@@ -1,19 +1,9 @@
-import { useNavigate } from "react-router-dom";
+import LoginCard from "../components/features/login/LoginCard";
 
 const Login = () => {
-  const navigate = useNavigate();
-
-  const handleLogin = () => {
-    localStorage.setItem('authToken', 'your-token-here');
-    navigate('/dashboard');
-  };
-
   return (
-    <div>
-      <h1>Login Page</h1>
-      <button onClick={handleLogin}>Login</button>
-    </div>
+      <LoginCard />
   );
 }
 
-export default Login
+export default Login;

@@ -6,6 +6,7 @@ import PrivateLayout from './layouts/PrivateLayout';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import { useAuth } from './context/AuthContext';
+import Signup from './pages/Signup';
 
 const PrivateRoute = () => {
   const { isAuthenticated } = useAuth();
@@ -18,7 +19,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: '/login', element: <Login /> },
-      { path: '/register', element: <div>Register Page</div> },
+      { path: '/signup', element: <Signup /> },
     ]
   },
   {
