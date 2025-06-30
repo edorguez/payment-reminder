@@ -16,12 +16,22 @@ const PublicLayout = () => {
               <li><a>Mobile Item 3</a></li>
             </ul>
           </div>
-          <a className="btn btn-ghost text-xl">Payment</a>
+          <Link to="/" className="btn btn-ghost text-xl">
+            Payment
+          </Link>
         </div>
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">
-            <li><a>Home</a></li>
-            <li><a>Plans</a></li>
+            <li>
+              <Link to="/">
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link to="/">
+                Plans
+              </Link>
+            </li>
           </ul>
         </div>
         <div className="navbar-end">

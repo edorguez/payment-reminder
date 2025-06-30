@@ -1,15 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 
-const LoginCard = () => {
+const SignupCard = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const handleLogin = () => {
+  const handleSignup = () => {
     login('my-long-token');
     navigate('/dashboard');
-  }
 
+  }
   return (
     <>
       <div className="flex justify-center mt-20">
@@ -20,11 +20,14 @@ const LoginCard = () => {
           <label className="label">Password</label>
           <input type="password" className="input" placeholder="Password" />
 
-          <button className="btn btn-neutral mt-4" onClick={handleLogin}>Login</button>
+          <label className="label">Repeat Password</label>
+          <input type="password" className="input" placeholder="Password" />
+
+          <button className="btn btn-neutral mt-4" onClick={handleSignup}>Sign Up</button>
         </fieldset>
       </div>
     </>
   );
 }
 
-export default LoginCard;
+export default SignupCard;
