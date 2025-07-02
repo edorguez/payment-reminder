@@ -1,6 +1,10 @@
+import DashboardTable from "../components/features/dashboard/DashboardTable";
+
 const Dashboard = () => {
   return (
-    <h1>My dashboard</h1>
+    <div className="bg-gray-100">
+      <DashboardTable />
+    </div>
   )
 }
 
