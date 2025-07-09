@@ -11,7 +11,7 @@ const PrivateLayout = () => {
   };
 
   return (
-    <>
+    <div className="bg-gray-50 min-h-dvh">
       <div className="navbar bg-base-100 shadow-sm">
         <div className="flex-1">
           <a className="btn btn-ghost text-xl">Payment</a>
@@ -44,7 +44,7 @@ const PrivateLayout = () => {
       <main>
         <Outlet />
       </main>
-    </>
+    </div>
   );
 }
 

@@ -1,6 +1,6 @@
 const DashboardTable = () => {
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto bg-white rounded-md shadow-sm">
       <table className="table">
         {/* head */}
         <thead>
@@ -27,6 +27,24 @@ const DashboardTable = () => {
             <td>Purple</td>
           </tr>
           {/* row 3 */}
+          <tr>
+            <th>3</th>
+            <td>Brice Swyre</td>
+            <td>Tax Accountant</td>
+            <td>Red</td>
+          </tr>
+          <tr>
+            <th>3</th>
+            <td>Brice Swyre</td>
+            <td>Tax Accountant</td>
+            <td>Red</td>
+          </tr>
+          <tr>
+            <th>3</th>
+            <td>Brice Swyre</td>
+            <td>Tax Accountant</td>
+            <td>Red</td>
+          </tr>
           <tr>
             <th>3</th>
             <td>Brice Swyre</td>
