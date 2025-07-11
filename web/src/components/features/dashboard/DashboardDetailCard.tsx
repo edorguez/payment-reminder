@@ -1,11 +1,24 @@
-const DashboardDetailCard = () => {
+import React from "react";
+import type { IconType } from "react-icons";
+
+interface DashboardDetailCardProps {
+  icon: IconType;
+  title: string;
+  total: number;
+}
+
+const DashboardDetailCard: React.FC<DashboardDetailCardProps> = ({
+  icon: Icon,
+  title,
+  total
+}) => {
   return  (
     <div className="card bg-base-100 sm:w-full  shadow-sm rounded-md">
       <div className="card-body">
-        <h2 className="card-title">Card title!</h2>
-        <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
-        <div className="card-actions justify-end">
-          <button className="btn btn-primary">Buy Now</button>
+        <div className="flex justify-center items-center">
+          <Icon className="text-lg text-primary" />
+          <h1 className="mx-2">{ title }:</h1>
+          <span className="text-xl text-secondary font-bold">{total}</span>
         </div>
       </div>
     </div>
