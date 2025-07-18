@@ -1,6 +1,13 @@
 import { Link, Outlet } from 'react-router-dom';
+import { IoEarthSharp } from "react-icons/io5";
+import { useTranslation } from 'react-i18next';
 
 const PublicLayout = () => {
+  const { t, i18n } = useTranslation('common');
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+  };
   return (
     <>
       <div className="navbar bg-base-100 shadow-sm">
@@ -24,23 +31,42 @@ const PublicLayout = () => {
           <ul className="menu menu-horizontal px-1">
             <li>
               <Link to="/">
-                Home
+                {t('home.home')}
               </Link>
             </li>
             <li>
               <Link to="/">
-                Plans
+                {t('home.plans')}
               </Link>
             </li>
           </ul>
         </div>
         <div className="navbar-end">
           <Link to="/login" className="btn btn-ghost">
-            Login
+            {t('home.login')}
           </Link>
-          <Link to="/signup" className='btn btn-ghost ml-1'>
-            Sign Up
+          <Link to="/signup" className='btn btn-ghost mx-1'>
+            {t('home.signUp')}
           </Link>
+          <div className="dropdown dropdown-end">
+            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
+              <IoEarthSharp />
+            </div>
+            <ul
+              tabIndex={0}
+              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+              <li>
+                <button onClick={() => changeLanguage('en')}>
+                  <span role="img" aria-label="USA flag">🇺🇸 English</span>
+                </button>
+              </li>
+              <li>
+                <button onClick={() => changeLanguage('es')}>
+                  <span role="img" aria-label="Spain flag">🇪🇸 Español</span>
+                </button>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
 
