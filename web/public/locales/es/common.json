@@ -1,8 +1,30 @@
 {
+  "privateLayout": {
+    "profile": "Perfil",
+    "newAlert": "+ Crear Alerta",
+    "settings": "Configuración",
+    "logout": "Cerrar Sesión"
+  },
   "home": {
     "home": "Inicio",
     "plans": "Planes",
     "login": "Iniciar Sesión",
     "signUp": "Registrarse"
+  },
+  "login": {
+    "login": "Iniciar Sesión",
+    "email": "Correo",
+    "password": "Contraseña"
+  },
+  "signUp": {
+    "signUp": "Registrarse",
+    "email": "Correo",
+    "password": "Contraseña",
+    "repeatPassword": "Repetir contraseña"
+  },
+  "dashboard": {
+    "upcomingAlerts": "Próximas Alertas",
+    "pausedAlerts": "Alertas Pausadas",
+    "totalAlerts": "Número de Alertas"
   }
 }

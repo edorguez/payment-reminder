@@ -1,8 +1,30 @@
 {
+  "privateLayout": {
+    "profile": "Profile",
+    "newAlert": "+ New Alert",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
   "home": {
     "home": "Home",
     "plans": "Plans",
     "login": "Login",
     "signUp": "Sign Up"
+  },
+  "login": {
+    "login": "Login",
+    "email": "Email",
+    "password": "Password"
+  },
+  "signUp": {
+    "signUp": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "repeatPassword": "Repeat Password"
+  },
+  "dashboard": {
+    "upcomingAlerts": "Upcoming Alerts",
+    "pausedAlerts": "Paused Alerts",
+    "totalAlerts": "Total Alerts"
   }
 }
