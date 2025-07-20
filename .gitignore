@@ -17,6 +17,8 @@
 *.pem
 
 # Environment files
+/web/*.env
+!/web/example.env
 /*.env
 /env/*.env
 !/example.env
