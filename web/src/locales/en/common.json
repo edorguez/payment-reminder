@@ -14,13 +14,15 @@
   "login": {
     "login": "Login",
     "email": "Email",
-    "password": "Password"
+    "password": "Password",
+    "or": "Or"
   },
   "signUp": {
     "signUp": "Sign Up",
     "email": "Email",
     "password": "Password",
-    "repeatPassword": "Repeat Password"
+    "repeatPassword": "Repeat Password",
+    "or": "Or"
   },
   "dashboard": {
     "upcomingAlerts": "Upcoming Alerts",

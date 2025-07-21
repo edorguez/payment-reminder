@@ -45,9 +45,18 @@ const LoginCard = () => {
           <input type="password" name="password" className="input" value={formData.password} onChange={handlePasswordChange} placeholder={t('login.password')} />
 
           <button className="btn btn-neutral mt-4" onClick={handleLogin}>{t('login.login')}</button>
+
+          <div className="flex items-center my-2">
+            <div className="w-full h-[1px] bg-gray-400"></div>
+            <span className="mx-2">{t('login.or')}</span>
+            <div className="w-full h-[1px] bg-gray-400"></div>
+          </div>
+          
+          <div className="flex justify-center">
+            <GoogleLogin />
+          </div>
         </fieldset>
       </div>
-      <GoogleLogin />
     </>
   );
 }

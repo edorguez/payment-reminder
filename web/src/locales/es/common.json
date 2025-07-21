@@ -14,13 +14,15 @@
   "login": {
     "login": "Iniciar Sesión",
     "email": "Correo",
-    "password": "Contraseña"
+    "password": "Contraseña",
+    "or": "O"
   },
   "signUp": {
     "signUp": "Registrarse",
     "email": "Correo",
     "password": "Contraseña",
-    "repeatPassword": "Repetir contraseña"
+    "repeatPassword": "Repetir contraseña",
+    "or": "O"
   },
   "dashboard": {
     "upcomingAlerts": "Próximas Alertas",
