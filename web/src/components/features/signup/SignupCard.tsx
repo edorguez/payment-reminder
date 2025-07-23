@@ -38,6 +38,7 @@ const SignupCard = () => {
       await updateProfile(cred.user, { displayName: formData.email.split('@')[0] });
       navigate('/dashboard');
     } catch (err) {
+      console.log('Error normal singup')
       console.log(err)
     }
   };

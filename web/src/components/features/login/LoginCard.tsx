@@ -30,6 +30,7 @@ const LoginCard = () => {
       await login(formData.email, formData.password);
       navigate('/dashboard');
     } catch (err) {
+      console.log('error normal login')
       console.log(err)
     }
   };
