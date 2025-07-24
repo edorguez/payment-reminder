@@ -19,10 +19,19 @@
   },
   "signUp": {
     "signUp": "Registrarse",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
     "email": "Correo",
     "password": "Contraseña",
     "repeatPassword": "Repetir contraseña",
-    "or": "O"
+    "or": "O",
+    "firstNameEmptyError": "Nombre NO debe estar vacío",
+    "lastNameEmptyError": "Apellido NO debe estar vacío",
+    "firstNameLengthError": "Nombre debe tener de 3 a 20 caracteres",
+    "lastNameLengthError": "Apellido debe tener de 3 a 20 caracteres",
+    "emailError": "Por favor ingresa un correo válido",
+    "passwordMatchError": "Contraseña y confirmar contraseña deben ser iguales",
+    "passwordLengthError": "Contraseña debe contener al menos 8 caracteres"
   },
   "dashboard": {
     "upcomingAlerts": "Próximas Alertas",

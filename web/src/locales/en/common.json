@@ -19,10 +19,19 @@
   },
   "signUp": {
     "signUp": "Sign Up",
+    "firstName": "First Name",
+    "lastName": "Last Name",
     "email": "Email",
     "password": "Password",
     "repeatPassword": "Repeat Password",
-    "or": "Or"
+    "or": "Or",
+    "firstNameEmptyError": "First name must NOT be empty",
+    "lastNameEmptyError": "Last name must NOT be empty",
+    "firstNameLengthError": "First name must be greater than 3 and less than 20 characters",
+    "lastNameLengthError": "First name must be greater than 3 and less than 20 characters",
+    "emailError": "Please enter a valid email",
+    "passwordMatchError": "Password and confirm password don't match",
+    "passwordLengthError": "Password must contain at least 8 characters"
   },
   "dashboard": {
     "upcomingAlerts": "Upcoming Alerts",

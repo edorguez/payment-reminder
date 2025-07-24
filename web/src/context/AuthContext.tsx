@@ -5,12 +5,14 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import type { User } from 'firebase/auth';
-import { auth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from '../firebase';
+import { createUserWithEmailAndPassword, getIdToken, updateProfile, type User } from 'firebase/auth';
+import { auth, signInWithEmailAndPassword, signOut, onAuthStateChanged, signInWithPopup, googleProvider } from '../firebase';
 
 interface AuthContextType {
   isAuthenticated: boolean;
+  signUp: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
+  loginGoogle: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -19,7 +21,6 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Sync with Firebase auth state once at start-up
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user: User | null) => {
       setIsAuthenticated(!!user);
@@ -27,18 +28,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return unsub;
   }, []);
 
-  // Firebase-based login
+  const signUp = async (email: string, password: string, firstName: string, lastName: string) => {
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    const fullName = `${firstName} ${lastName}`;
+    await updateProfile(cred.user, { displayName: fullName });
+  }
+
   const login = async (email: string, password: string) => {
     await signInWithEmailAndPassword(auth, email, password);
   };
 
-  // Firebase-based logout
+  const loginGoogle = async () => {
+    const userCredential = await signInWithPopup(auth, googleProvider);
+
+    const user = userCredential.user;
+    const firebaseUid = user.uid;
+    const email = user.email;
+    const fullName = user.displayName;
+
+    const idToken = await getIdToken(user);
+
+    console.log({ firebaseUid, email, fullName, idToken });
+  };
+
   const logout = async () => {
     await signOut(auth);
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, signUp, login, loginGoogle, logout }}>
       {children}
     </AuthContext.Provider>
   );
