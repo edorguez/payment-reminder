@@ -15,7 +15,9 @@
     "login": "Login",
     "email": "Email",
     "password": "Password",
-    "or": "Or"
+    "or": "Or",
+    "emailError": "Please enter a valid email",
+    "passwordLengthError": "Password must contain at least 8 characters"
   },
   "signUp": {
     "signUp": "Sign Up",
@@ -30,7 +32,7 @@
     "firstNameLengthError": "First name must be greater than 3 and less than 20 characters",
     "lastNameLengthError": "First name must be greater than 3 and less than 20 characters",
     "emailError": "Please enter a valid email",
-    "passwordMatchError": "Password and confirm password don't match",
+    "passwordMatchError": "Password and repeat password don't match",
     "passwordLengthError": "Password must contain at least 8 characters"
   },
   "dashboard": {
