@@ -20,15 +20,13 @@ const SignupCard = () => {
     const { signUp } = useAuth();
 
     const [formData, setFormData] = useState<SignUp>({
-        firstName: '',
-        lastName: '',
+        name: '',
         email: '',
         password: '',
         repeatPassword: '',
     });
     const [formDataErrors, setFormDataErrors] = useState<SignUp>({
-        firstName: '',
-        lastName: '',
+        name: '',
         email: '',
         password: '',
         repeatPassword: '',
@@ -66,8 +64,7 @@ const SignupCard = () => {
             await signUp(
                 formData.email,
                 formData.password,
-                formData.firstName,
-                formData.lastName,
+                formData.name
             );
             navigate('/dashboard');
         } catch (err) {
@@ -82,14 +79,13 @@ const SignupCard = () => {
     const isValidForm = (): boolean => {
         let isValid = true;
         setFormDataErrors({
-            firstName: '',
-            lastName: '',
+            name: '',
             email: '',
             password: '',
             repeatPassword: '',
         });
 
-        if (!formData.firstName) {
+        if (!formData.name) {
             setFormDataErrors((prev) => ({
                 ...prev,
                 firstName: t('signUp.firstNameEmptyError'),
@@ -97,26 +93,10 @@ const SignupCard = () => {
             isValid = false;
         }
 
-        if (!formData.lastName) {
-            setFormDataErrors((prev) => ({
-                ...prev,
-                lastName: t('signUp.lastNameEmptyError'),
-            }));
-            isValid = false;
-        }
-
-        if (formData.firstName.length < 3) {
+        if (formData.name.length < 3) {
             setFormDataErrors((prev) => ({
                 ...prev,
                 firstName: t('signUp.firstNameLengthError'),
-            }));
-            isValid = false;
-        }
-
-        if (formData.lastName.length < 3) {
-            setFormDataErrors((prev) => ({
-                ...prev,
-                lastName: t('signUp.lastNameLengthError'),
             }));
             isValid = false;
         }
@@ -155,27 +135,14 @@ const SignupCard = () => {
                     <label className="label">{t('signUp.firstName')}</label>
                     <input
                         type="text"
-                        className={`input ${formDataErrors.firstName ? 'input-error' : ''}`}
-                        name="firstName"
-                        value={formData.firstName}
+                        className={`input ${formDataErrors.name ? 'input-error' : ''}`}
+                        name="name"
+                        value={formData.name}
                         onChange={handleNameChange}
                         placeholder={t('signUp.firstName')}
                     />
                     <small className="text-error">
-                        {formDataErrors.firstName}
-                    </small>
-
-                    <label className="label">{t('signUp.lastName')}</label>
-                    <input
-                        type="text"
-                        className={`input ${formDataErrors.lastName ? 'input-error' : ''}`}
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleNameChange}
-                        placeholder={t('signUp.lastName')}
-                    />
-                    <small className="text-error">
-                        {formDataErrors.lastName}
+                        {formDataErrors.name}
                     </small>
 
                     <label className="label">{t('signUp.email')}</label>

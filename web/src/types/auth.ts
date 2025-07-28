@@ -4,8 +4,7 @@ export type Login = {
 }
 
 export type SignUp = {
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
   password: string;
   repeatPassword: string;

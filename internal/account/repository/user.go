@@ -12,6 +12,7 @@ import (
 type UserRepository interface {
 	Create(ctx context.Context, user *models.User) (*models.User, error)
 	FindByID(ctx context.Context, id int64) (*models.User, error)
+	FindByFirebaseID(ctx context.Context, id string) (*models.User, error)
 	FindByEmail(ctx context.Context, email string) *models.User
 	Update(ctx context.Context, id int64, newUser *models.User) error
 	Delete(ctx context.Context, id int64) error
@@ -45,6 +46,17 @@ func (r *userRepository) FindByID(ctx context.Context, id int64) (*models.User, 
 	}
 
 	return &user, nil
+}
+
+func (r *userRepository) FindByFirebaseID(ctx context.Context, id string) (*models.User, error) {
+	var users []models.User
+
+	r.DB.Where("firebaseUid = ?", id).Find(&users)
+	if len(users) == 0 {
+		return nil, &errors.Error{Err: errors.ErrNotFound, Message: "User not found"}
+	}
+
+	return &users[0], nil
 }
 
 func (r *userRepository) FindByEmail(ctx context.Context, email string) *models.User {

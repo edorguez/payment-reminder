@@ -27,8 +27,7 @@ func (r *Routes) addUserRoutes() {
 	userGroup := r.router.Group("/api/users")
 	{
 		userGroup.POST("/", r.userHandler.Create)
-		userGroup.GET("/", r.userHandler.FindByEmail)
-		userGroup.GET("/verify", r.userHandler.FindByEmail)
+		userGroup.GET("/", r.userHandler.ListOrFind)
 		userGroup.GET("/:id", r.userHandler.FindById)
 		userGroup.PUT("/:id", r.userHandler.Update)
 		userGroup.DELETE("/:id", r.userHandler.Delete)

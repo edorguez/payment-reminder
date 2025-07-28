@@ -68,6 +68,62 @@ func (h *UserHandler) FindById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, user)
 }
 
+func (h *UserHandler) ListOrFind(c *gin.Context) {
+	email := c.Query("email")
+	firebaseId := c.Query("firebaseId")
+
+	switch {
+	case email != "" && firebaseId != "":
+		c.JSON(http.StatusBadRequest,
+			gin.H{"error": "only one filter allowed"})
+		return
+	case email != "":
+		user, err := h.svc.FindByEmail(c.Request.Context(), email)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+			return
+		}
+		c.JSON(http.StatusOK, user)
+	case fbID != "":
+		user, err := h.svc.FindByFirebaseID(c.Request.Context(), fbID)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+			return
+		}
+		c.JSON(http.StatusOK, user)
+	default:
+		// No filter – return the whole collection (paginated)
+		users, err := h.svc.List(c.Request.Context())
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, users)
+	}
+}
+
+func (h *UserHandler) FindByFirebaseId(ctx *gin.Context) {
+	id := ctx.Query("firebaseId")
+	if id == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Firebase ID query param is required"})
+		return
+	}
+
+	user, err := h.service.FindByFirebaseID(ctx, id)
+	if err != nil {
+		var customErr *customerrors.Error
+		if errors.As(err, &customErr) {
+			status := utils.MapCodeToHTTPStatus(customErr.Err)
+			ctx.JSON(status, gin.H{"error": customErr.Message})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, user)
+}
+
 func (h *UserHandler) FindByEmail(ctx *gin.Context) {
 	email := ctx.Query("email")
 	if email == "" {

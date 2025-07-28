@@ -16,6 +16,7 @@ import (
 type UserService interface {
 	Create(ctx context.Context, email string, password string, userPlanId int64) error
 	FindByID(ctx context.Context, id int64) (*models.User, error)
+	FindByFirebaseID(ctx context.Context, id string) (*models.User, error)
 	FindByEmail(ctx context.Context, email string) *models.User
 	Update(ctx context.Context, id int64, newUser *models.User) error
 	Delete(ctx context.Context, id int64) error
@@ -75,6 +76,10 @@ func (s *userService) Create(ctx context.Context, email string, password string,
 
 func (s *userService) FindByID(ctx context.Context, id int64) (*models.User, error) {
 	return s.repo.FindByID(ctx, id)
+}
+
+func (s *userService) FindByFirebaseID(ctx context.Context, id string) (*models.User, error) {
+	return s.repo.FindByFirebaseID(ctx, id)
 }
 
 func (s *userService) FindByEmail(ctx context.Context, email string) *models.User {
