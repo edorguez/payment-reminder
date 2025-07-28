@@ -17,7 +17,8 @@
     "password": "Contraseña",
     "or": "O",
     "emailError": "Por favor ingresa un correo válido",
-    "passwordLengthError": "Contraseña debe contener al menos 8 caracteres"
+    "passwordLengthError": "Contraseña debe contener al menos 8 caracteres",
+    "loginError": "Error al iniciar sesión"
   },
   "signUp": {
     "signUp": "Registrarse",
@@ -33,7 +34,8 @@
     "lastNameLengthError": "Apellido debe tener de 3 a 20 caracteres",
     "emailError": "Por favor ingresa un correo válido",
     "passwordMatchError": "Contraseña y repetir contraseña deben ser iguales",
-    "passwordLengthError": "Contraseña debe contener al menos 8 caracteres"
+    "passwordLengthError": "Contraseña debe contener al menos 8 caracteres",
+    "signupError": "Error al registrarse"
   },
   "dashboard": {
     "upcomingAlerts": "Próximas Alertas",
