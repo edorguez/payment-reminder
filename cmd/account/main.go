@@ -1,10 +1,8 @@
 package main
 
 import (
-	"context"
 	"log"
 
-	firebase "firebase.google.com/go/v4"
 	config "github.com/edorguez/payment-reminder/configs/account"
 	"github.com/edorguez/payment-reminder/internal/account"
 	"github.com/edorguez/payment-reminder/internal/account/handlers"
@@ -12,8 +10,8 @@ import (
 	"github.com/edorguez/payment-reminder/internal/account/repository"
 	"github.com/edorguez/payment-reminder/internal/account/services"
 	"github.com/edorguez/payment-reminder/pkg/database/postgresql"
+	"github.com/edorguez/payment-reminder/pkg/firebase"
 	"github.com/edorguez/payment-reminder/pkg/kafka"
-	"google.golang.org/api/option"
 )
 
 func main() {
@@ -36,22 +34,8 @@ func main() {
 		return
 	}
 
-	// Use the path to your service account JSON
-	opt := option.WithCredentialsFile("../../firebase-adminsdk.json")
-
-	// Initialize Firebae the app
-	app, err := firebase.NewApp(context.Background(), nil, opt)
-	if err != nil {
-		log.Fatalf("error initializing Firbase app: %v\n", err)
-		return
-	}
-
-	// Get Firebase Auth client
-	firebaseClient, err := app.Auth(context.Background())
-	if err != nil {
-		log.Fatalf("error getting Firebase Auth client: %v\n", err)
-		return
-	}
+	// Start firebase
+	firebase.Init()
 
 	// Start Kafka producer
 	userProducer, err := kafka.NewProducer([]string{"localhost:29092"}, "users")
@@ -64,7 +48,7 @@ func main() {
 	models.AutoMigrateModels(db)
 
 	userRepo := repository.NewUserRepository(db)
-	userService := services.NewUserService(userRepo, firebaseClient, userProducer)
+	userService := services.NewUserService(userRepo, userProducer)
 	userHandler := handlers.NewUserHandler(userService)
 
 	// Start account routes

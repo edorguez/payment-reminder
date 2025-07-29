@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"firebase.google.com/go/v4/auth"
 	models "github.com/edorguez/payment-reminder/internal/account/models"
 	"github.com/edorguez/payment-reminder/internal/account/repository"
 	"github.com/edorguez/payment-reminder/pkg/constants"
@@ -17,37 +16,35 @@ type UserService interface {
 	Create(ctx context.Context, email string, password string, userPlanId int64) error
 	FindByID(ctx context.Context, id int64) (*models.User, error)
 	FindByFirebaseID(ctx context.Context, id string) (*models.User, error)
-	FindByEmail(ctx context.Context, email string) *models.User
+	FindByEmail(ctx context.Context, email string) (*models.User, error)
 	Update(ctx context.Context, id int64, newUser *models.User) error
 	Delete(ctx context.Context, id int64) error
-	VerifyToken(ctx context.Context, token string) (string, error)
+	// VerifyToken(ctx context.Context, token string) (string, error)
 }
 
 type userService struct {
 	repo     repository.UserRepository
-	firebase *auth.Client
 	producer *kafka.Producer
 }
 
-func NewUserService(repo repository.UserRepository, firebase *auth.Client, producer *kafka.Producer) UserService {
+func NewUserService(repo repository.UserRepository, producer *kafka.Producer) UserService {
 	return &userService{
 		repo:     repo,
-		firebase: firebase,
 		producer: producer,
 	}
 }
 
 func (s *userService) Create(ctx context.Context, email string, password string, userPlanId int64) error {
-	params := (&auth.UserToCreate{}).
-		Email(email).
-		Password(password).
-		EmailVerified(false).
-		Disabled(false)
+	// params := (&auth.UserToCreate{}).
+	// 	Email(email).
+	// 	Password(password).
+	// 	EmailVerified(false).
+	// 	Disabled(false)
 
-	firebaseRes, err := s.firebase.CreateUser(context.Background(), params)
-	if err != nil {
-		return &errors.Error{Err: errors.ErrFirebase, Message: err.Error()}
-	}
+	// firebaseRes, err := s.firebase.CreateUser(context.Background(), params)
+	// if err != nil {
+	// 	return &errors.Error{Err: errors.ErrFirebase, Message: err.Error()}
+	// }
 
 	u := &models.User{
 		FirebaseUID:     firebaseRes.UID,
@@ -82,7 +79,7 @@ func (s *userService) FindByFirebaseID(ctx context.Context, id string) (*models.
 	return s.repo.FindByFirebaseID(ctx, id)
 }
 
-func (s *userService) FindByEmail(ctx context.Context, email string) *models.User {
+func (s *userService) FindByEmail(ctx context.Context, email string) (*models.User, error) {
 	return s.repo.FindByEmail(ctx, email)
 }
 
@@ -123,10 +120,10 @@ func (s *userService) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-func (s *userService) VerifyToken(ctx context.Context, token string) (string, error) {
-	t, err := s.firebase.VerifyIDToken(ctx, token)
-	if err != nil {
-		return "", &errors.Error{Err: errors.ErrFirebase, Message: err.Error()}
-	}
-	return t.UID, nil
-}
+// func (s *userService) VerifyToken(ctx context.Context, token string) (string, error) {
+// 	t, err := s.firebase.VerifyIDToken(ctx, token)
+// 	if err != nil {
+// 		return "", &errors.Error{Err: errors.ErrFirebase, Message: err.Error()}
+// 	}
+// 	return t.UID, nil
+// }

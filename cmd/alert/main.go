@@ -12,6 +12,7 @@ import (
 	"github.com/edorguez/payment-reminder/internal/alert/services"
 	"github.com/edorguez/payment-reminder/pkg/database/postgresql"
 	"github.com/edorguez/payment-reminder/pkg/database/redis"
+	"github.com/edorguez/payment-reminder/pkg/firebase"
 )
 
 func main() {
@@ -42,6 +43,9 @@ func main() {
 
 	// Migrate GORM models
 	models.AutoMigrateModels(db)
+
+	// Start firebase
+	firebase.Init()
 
 	// Instanciate repositories and services
 	userCacheRepo := repository.NewUserCacheRepository(redis)
