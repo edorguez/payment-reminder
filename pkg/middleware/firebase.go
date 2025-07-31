@@ -12,9 +12,9 @@ import (
 const FirebaseUIDKey = "firebase_uid"
 
 type FirebaseClaims struct {
-	UID   string
-	Email string
-	Name  string
+	FirbaseUID string
+	Email      string
+	Name       string
 }
 
 func ExtractClaims(c *gin.Context) (*FirebaseClaims, bool) {
@@ -24,13 +24,14 @@ func ExtractClaims(c *gin.Context) (*FirebaseClaims, bool) {
 	}
 	t := decoded.(*auth.Token)
 
+	firebaseUID, _ := t.Claims["user_id"].(string)
 	email, _ := t.Claims["email"].(string)
 	name, _ := t.Claims["name"].(string)
 
 	return &FirebaseClaims{
-		UID:   t.UID,
-		Email: email,
-		Name:  name,
+		FirbaseUID: firebaseUID,
+		Email:      email,
+		Name:       name,
 	}, true
 }
 

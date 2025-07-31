@@ -1,16 +1,16 @@
 package services
 
 import (
-	"context"
 	models "github.com/edorguez/payment-reminder/internal/alert/models"
 	"github.com/edorguez/payment-reminder/internal/alert/repository"
+	"github.com/gin-gonic/gin"
 )
 
 type AlertService interface {
-	Create(ctx context.Context, alert *models.Alert) error
-	FindByID(ctx context.Context, id int64) (*models.Alert, error)
-	Update(ctx context.Context, id int64, newUser *models.Alert) error
-	Delete(ctx context.Context, id int64) error
+	Create(ctx *gin.Context, alert *models.Alert) error
+	FindByID(ctx *gin.Context, id int64) (*models.Alert, error)
+	Update(ctx *gin.Context, id int64, newUser *models.Alert) error
+	Delete(ctx *gin.Context, id int64) error
 }
 
 type alertService struct {
@@ -27,7 +27,7 @@ func NewAlertService(repo repository.AlertRepository, alertTemplateRepo reposito
 	}
 }
 
-func (s *alertService) Create(ctx context.Context, alert *models.Alert) error {
+func (s *alertService) Create(ctx *gin.Context, alert *models.Alert) error {
 	_, err := s.userCacheRepo.FindByID(ctx, alert.UserID)
 	if err != nil {
 		return err
@@ -43,11 +43,11 @@ func (s *alertService) Create(ctx context.Context, alert *models.Alert) error {
 	return err
 }
 
-func (s *alertService) FindByID(ctx context.Context, id int64) (*models.Alert, error) {
+func (s *alertService) FindByID(ctx *gin.Context, id int64) (*models.Alert, error) {
 	return s.repo.FindByID(ctx, id)
 }
 
-func (s *alertService) Update(ctx context.Context, id int64, newAlert *models.Alert) error {
+func (s *alertService) Update(ctx *gin.Context, id int64, newAlert *models.Alert) error {
 	_, err := s.userCacheRepo.FindByID(ctx, newAlert.UserID)
 	if err != nil {
 		return err
@@ -61,6 +61,6 @@ func (s *alertService) Update(ctx context.Context, id int64, newAlert *models.Al
 	return s.repo.Update(ctx, id, newAlert)
 }
 
-func (s *alertService) Delete(ctx context.Context, id int64) error {
+func (s *alertService) Delete(ctx *gin.Context, id int64) error {
 	return s.repo.Delete(ctx, id)
 }

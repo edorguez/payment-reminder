@@ -2,6 +2,7 @@ package account
 
 import (
 	"github.com/edorguez/payment-reminder/internal/account/handlers"
+	"github.com/edorguez/payment-reminder/pkg/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,8 +13,9 @@ type Routes struct {
 
 func NewRoutes(userHandler handlers.UserHandler) *Routes {
 	router := gin.Default()
-	routes := &Routes{userHandler: userHandler, router: router}
+	router.Use(middleware.FirebaseAuth())
 
+	routes := &Routes{userHandler: userHandler, router: router}
 	routes.addUserRoutes()
 
 	return routes

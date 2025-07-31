@@ -1,19 +1,19 @@
 package repository
 
 import (
-	"context"
 	"time"
 
 	models "github.com/edorguez/payment-reminder/internal/alert/models"
 	"github.com/edorguez/payment-reminder/pkg/core/errors"
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 type AlertRepository interface {
-	Create(ctx context.Context, alert *models.Alert) (*models.Alert, error)
-	FindByID(ctx context.Context, id int64) (*models.Alert, error)
-	Update(ctx context.Context, id int64, newAlert *models.Alert) error
-	Delete(ctx context.Context, id int64) error
+	Create(ctx *gin.Context, alert *models.Alert) (*models.Alert, error)
+	FindByID(ctx *gin.Context, id int64) (*models.Alert, error)
+	Update(ctx *gin.Context, id int64, newAlert *models.Alert) error
+	Delete(ctx *gin.Context, id int64) error
 }
 
 type alertRepository struct {
@@ -26,7 +26,7 @@ func NewAlertRepository(DB *gorm.DB) AlertRepository {
 	}
 }
 
-func (r *alertRepository) Create(ctx context.Context, alert *models.Alert) (*models.Alert, error) {
+func (r *alertRepository) Create(ctx *gin.Context, alert *models.Alert) (*models.Alert, error) {
 	createdAlert := r.DB.Create(alert)
 	if createdAlert.Error != nil {
 		return nil, &errors.Error{Err: errors.ErrGeneral, Message: createdAlert.Error.Error()}
@@ -35,7 +35,7 @@ func (r *alertRepository) Create(ctx context.Context, alert *models.Alert) (*mod
 	return alert, nil
 }
 
-func (r *alertRepository) FindByID(ctx context.Context, id int64) (*models.Alert, error) {
+func (r *alertRepository) FindByID(ctx *gin.Context, id int64) (*models.Alert, error) {
 	var alert models.Alert
 
 	r.DB.First(&alert, id)
@@ -46,7 +46,7 @@ func (r *alertRepository) FindByID(ctx context.Context, id int64) (*models.Alert
 	return &alert, nil
 }
 
-func (r *alertRepository) Update(ctx context.Context, id int64, newAlert *models.Alert) error {
+func (r *alertRepository) Update(ctx *gin.Context, id int64, newAlert *models.Alert) error {
 	var oldAlert models.Alert
 
 	r.DB.First(&oldAlert, id)
@@ -67,7 +67,7 @@ func (r *alertRepository) Update(ctx context.Context, id int64, newAlert *models
 	return nil
 }
 
-func (r *alertRepository) Delete(ctx context.Context, id int64) error {
+func (r *alertRepository) Delete(ctx *gin.Context, id int64) error {
 	var alert models.Alert
 
 	r.DB.First(&alert, id)

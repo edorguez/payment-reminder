@@ -23,18 +23,7 @@ func NewUserHandler(service services.UserService) *UserHandler {
 }
 
 func (h *UserHandler) Create(ctx *gin.Context) {
-	type createUserRequest struct {
-		UserPlanID int64  `json:"user_plan_id" binding:"required"`
-		Email      string `json:"email" binding:"required"`
-		Password   string `json:"password" binding:"required"`
-	}
-	var req createUserRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	err := h.service.Create(ctx, req.Email, req.Password, req.UserPlanID)
+	err := h.service.Create(ctx)
 	if err != nil {
 		var customErr *customerrors.Error
 		if errors.As(err, &customErr) {
@@ -77,7 +66,7 @@ func (h *UserHandler) ListOrFind(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "only one filter allowed"})
 		return
 	case email != "":
-		user, err := h.service.FindByEmail(ctx.Request.Context(), email)
+		user, err := h.service.FindByEmail(ctx, email)
 		if err != nil {
 			var customErr *customerrors.Error
 			if errors.As(err, &customErr) {

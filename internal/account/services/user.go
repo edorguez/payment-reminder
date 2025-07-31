@@ -1,7 +1,6 @@
 package services
 
 import (
-	"context"
 	"time"
 
 	models "github.com/edorguez/payment-reminder/internal/account/models"
@@ -10,15 +9,17 @@ import (
 	"github.com/edorguez/payment-reminder/pkg/core/errors"
 	"github.com/edorguez/payment-reminder/pkg/kafka"
 	"github.com/edorguez/payment-reminder/pkg/kafka/events"
+	"github.com/edorguez/payment-reminder/pkg/middleware"
+	"github.com/gin-gonic/gin"
 )
 
 type UserService interface {
-	Create(ctx context.Context, email string, password string, userPlanId int64) error
-	FindByID(ctx context.Context, id int64) (*models.User, error)
-	FindByFirebaseID(ctx context.Context, id string) (*models.User, error)
-	FindByEmail(ctx context.Context, email string) (*models.User, error)
-	Update(ctx context.Context, id int64, newUser *models.User) error
-	Delete(ctx context.Context, id int64) error
+	Create(ctx *gin.Context) error
+	FindByID(ctx *gin.Context, id int64) (*models.User, error)
+	FindByFirebaseID(ctx *gin.Context, id string) (*models.User, error)
+	FindByEmail(ctx *gin.Context, email string) (*models.User, error)
+	Update(ctx *gin.Context, id int64, newUser *models.User) error
+	Delete(ctx *gin.Context, id int64) error
 	// VerifyToken(ctx context.Context, token string) (string, error)
 }
 
@@ -34,23 +35,19 @@ func NewUserService(repo repository.UserRepository, producer *kafka.Producer) Us
 	}
 }
 
-func (s *userService) Create(ctx context.Context, email string, password string, userPlanId int64) error {
-	// params := (&auth.UserToCreate{}).
-	// 	Email(email).
-	// 	Password(password).
-	// 	EmailVerified(false).
-	// 	Disabled(false)
-
-	// firebaseRes, err := s.firebase.CreateUser(context.Background(), params)
-	// if err != nil {
-	// 	return &errors.Error{Err: errors.ErrFirebase, Message: err.Error()}
-	// }
+func (s *userService) Create(ctx *gin.Context) error {
+	claims, ok := middleware.ExtractClaims(ctx)
+	if !ok {
+		return &errors.Error{Err: errors.ErrGeneral, Message: "Claims not found"}
+	}
 
 	u := &models.User{
-		FirebaseUID:     firebaseRes.UID,
-		UserPlanID:      userPlanId,
-		Email:           email,
+		FirebaseUID:     claims.FirbaseUID,
+		UserPlanID:      constants.UserPlanBasic,
+		Name:            claims.Name,
+		Email:           claims.Email,
 		LastPaymentDate: time.Now().UTC(),
+		LastLoginDate:   time.Now().UTC(),
 	}
 
 	user, err := s.repo.Create(ctx, u)
@@ -71,19 +68,19 @@ func (s *userService) Create(ctx context.Context, email string, password string,
 	return nil
 }
 
-func (s *userService) FindByID(ctx context.Context, id int64) (*models.User, error) {
+func (s *userService) FindByID(ctx *gin.Context, id int64) (*models.User, error) {
 	return s.repo.FindByID(ctx, id)
 }
 
-func (s *userService) FindByFirebaseID(ctx context.Context, id string) (*models.User, error) {
+func (s *userService) FindByFirebaseID(ctx *gin.Context, id string) (*models.User, error) {
 	return s.repo.FindByFirebaseID(ctx, id)
 }
 
-func (s *userService) FindByEmail(ctx context.Context, email string) (*models.User, error) {
+func (s *userService) FindByEmail(ctx *gin.Context, email string) (*models.User, error) {
 	return s.repo.FindByEmail(ctx, email)
 }
 
-func (s *userService) Update(ctx context.Context, id int64, newUser *models.User) error {
+func (s *userService) Update(ctx *gin.Context, id int64, newUser *models.User) error {
 	err := s.repo.Update(ctx, id, newUser)
 	if err != nil {
 		return err
@@ -102,7 +99,7 @@ func (s *userService) Update(ctx context.Context, id int64, newUser *models.User
 	return nil
 }
 
-func (s *userService) Delete(ctx context.Context, id int64) error {
+func (s *userService) Delete(ctx *gin.Context, id int64) error {
 	err := s.repo.Delete(ctx, id)
 	if err != nil {
 		return err

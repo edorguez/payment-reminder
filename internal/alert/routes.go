@@ -2,6 +2,7 @@ package alert
 
 import (
 	"github.com/edorguez/payment-reminder/internal/alert/handlers"
+	"github.com/edorguez/payment-reminder/pkg/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,8 +13,9 @@ type Routes struct {
 
 func NewRoutes(alertHandler handlers.AlertHandler) *Routes {
 	router := gin.Default()
-	routes := &Routes{alertHandler: alertHandler, router: router}
+	router.Use(middleware.FirebaseAuth())
 
+	routes := &Routes{alertHandler: alertHandler, router: router}
 	routes.addAlertRoutes()
 
 	return routes

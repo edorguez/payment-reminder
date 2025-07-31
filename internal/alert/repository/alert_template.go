@@ -1,15 +1,14 @@
 package repository
 
 import (
-	"context"
-
 	"github.com/edorguez/payment-reminder/internal/alert/models"
 	"github.com/edorguez/payment-reminder/pkg/core/errors"
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 type AlertTemplateRepository interface {
-	FindByID(ctx context.Context, id int64) (*models.AlertTemplate, error)
+	FindByID(ctx *gin.Context, id int64) (*models.AlertTemplate, error)
 }
 
 type alertTemplateRepository struct {
@@ -22,7 +21,7 @@ func NewAlertTemplateRepository(DB *gorm.DB) AlertTemplateRepository {
 	}
 }
 
-func (r *alertTemplateRepository) FindByID(ctx context.Context, id int64) (*models.AlertTemplate, error) {
+func (r *alertTemplateRepository) FindByID(ctx *gin.Context, id int64) (*models.AlertTemplate, error) {
 	var template models.AlertTemplate
 
 	r.DB.First(&template, id)
