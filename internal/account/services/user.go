@@ -41,6 +41,16 @@ func (s *userService) Create(ctx *gin.Context) error {
 		return &errors.Error{Err: errors.ErrGeneral, Message: "Claims not found"}
 	}
 
+	_, err := s.FindByEmail(ctx, claims.Email)
+	if err == nil {
+		return &errors.Error{Err: errors.ErrInvalidInput, Message: "Error creating user, email is already in use"}
+	}
+
+	_, err = s.FindByFirebaseID(ctx, claims.FirbaseUID)
+	if err == nil {
+		return &errors.Error{Err: errors.ErrInvalidInput, Message: "Error creating user, firebase UID already exists"}
+	}
+
 	u := &models.User{
 		FirebaseUID:     claims.FirbaseUID,
 		UserPlanID:      constants.UserPlanBasic,
