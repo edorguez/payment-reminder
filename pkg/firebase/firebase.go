@@ -17,7 +17,7 @@ var (
 
 func Init() {
 	once.Do(func() {
-		opt := option.WithCredentialsFile("../../firebase-adminsdk.json")
+		opt := option.WithCredentialsFile("firebase-adminsdk.json")
 		app, err := firebase.NewApp(context.Background(), nil, opt)
 		if err != nil {
 			log.Fatalf("firebase.NewApp: %v", err)
