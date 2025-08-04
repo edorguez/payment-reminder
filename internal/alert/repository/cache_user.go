@@ -1,24 +1,25 @@
 package repository
 
 import (
+	"context"
 	"encoding/json"
 	"strconv"
 
 	"github.com/edorguez/payment-reminder/pkg/core/errors"
-	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 )
 
 type UserCache struct {
-	ID    int64  `json:"id"`
-	Email string `json:"email"`
+	ID          int64  `json:"id"`
+	Email       string `json:"email"`
+	FirebaseUID string `json:"firebaseUid"`
 }
 
 type UserCacheRepository interface {
-	Create(ctx *gin.Context, user UserCache) (*int64, error)
-	FindByID(ctx *gin.Context, id int64) (*UserCache, error)
-	Update(ctx *gin.Context, user UserCache) error
-	Delete(ctx *gin.Context, id int64) error
+	Create(ctx context.Context, user UserCache) (*int64, error)
+	FindByID(ctx context.Context, id int64) (*UserCache, error)
+	Update(ctx context.Context, user UserCache) error
+	Delete(ctx context.Context, id int64) error
 }
 
 type userCacheRepository struct {
@@ -31,7 +32,7 @@ func NewUserCacheRepository(redis *redis.Client) UserCacheRepository {
 	}
 }
 
-func (r *userCacheRepository) Create(ctx *gin.Context, user UserCache) (*int64, error) {
+func (r *userCacheRepository) Create(ctx context.Context, user UserCache) (*int64, error) {
 	data, err := json.Marshal(user)
 	if err != nil {
 		return nil, &errors.Error{Err: errors.ErrGeneral, Message: "Failed to marshal user"}
@@ -44,7 +45,7 @@ func (r *userCacheRepository) Create(ctx *gin.Context, user UserCache) (*int64, 
 	return &user.ID, nil
 }
 
-func (r *userCacheRepository) FindByID(ctx *gin.Context, id int64) (*UserCache, error) {
+func (r *userCacheRepository) FindByID(ctx context.Context, id int64) (*UserCache, error) {
 	data, err := r.redis.Get(ctx, strconv.FormatInt(id, 10)).Bytes()
 	if err == redis.Nil {
 		return nil, &errors.Error{Err: errors.ErrNotFound, Message: "User not found"}
@@ -62,7 +63,7 @@ func (r *userCacheRepository) FindByID(ctx *gin.Context, id int64) (*UserCache, 
 	return &user, nil
 }
 
-func (r *userCacheRepository) Update(ctx *gin.Context, user UserCache) error {
+func (r *userCacheRepository) Update(ctx context.Context, user UserCache) error {
 	count, err := r.redis.Exists(ctx, strconv.FormatInt(user.ID, 10)).Result()
 	if err != nil {
 		return &errors.Error{Err: errors.ErrGeneral, Message: "Failed to check user existence"}
@@ -83,7 +84,7 @@ func (r *userCacheRepository) Update(ctx *gin.Context, user UserCache) error {
 	return nil
 }
 
-func (r *userCacheRepository) Delete(ctx *gin.Context, id int64) error {
+func (r *userCacheRepository) Delete(ctx context.Context, id int64) error {
 	if err := r.redis.Del(ctx, strconv.FormatInt(id, 10)).Err(); err != nil {
 		return &errors.Error{Err: errors.ErrGeneral, Message: "Failed to delete user"}
 	}

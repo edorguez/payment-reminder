@@ -66,9 +66,10 @@ func (s *userService) Create(ctx *gin.Context) error {
 	}
 
 	event := events.UserEvent{
-		EventType: constants.UserCreatedEvent,
-		UserID:    user.ID,
-		Email:     user.Email,
+		EventType:   constants.UserCreatedEvent,
+		UserID:      user.ID,
+		Email:       user.Email,
+		FirebaseUID: user.FirebaseUID,
 	}
 
 	if err = s.producer.SendEvent(event); err != nil {
@@ -97,9 +98,10 @@ func (s *userService) Update(ctx *gin.Context, id int64, newUser *models.User) e
 	}
 
 	event := events.UserEvent{
-		EventType: constants.UserUpdatedEvent,
-		UserID:    id,
-		Email:     newUser.Email,
+		EventType:   constants.UserUpdatedEvent,
+		UserID:      id,
+		Email:       newUser.Email,
+		FirebaseUID: newUser.FirebaseUID,
 	}
 
 	if err = s.producer.SendEvent(event); err != nil {
