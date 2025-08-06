@@ -51,7 +51,7 @@ func (r *userRepository) FindByID(ctx *gin.Context, id int64) (*models.User, err
 func (r *userRepository) FindByFirebaseID(ctx *gin.Context, id string) (*models.User, error) {
 	var users []models.User
 
-	r.DB.Where("firebaseUid = ?", id).Find(&users)
+	r.DB.Where("firebase_uid = ?", id).Find(&users)
 	if len(users) == 0 {
 		return nil, &errors.Error{Err: errors.ErrNotFound, Message: "User not found"}
 	}

@@ -1,8 +1,11 @@
 package alert
 
 import (
+	"time"
+
 	"github.com/edorguez/payment-reminder/internal/alert/handlers"
 	"github.com/edorguez/payment-reminder/pkg/middleware"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,6 +16,8 @@ type Routes struct {
 
 func NewRoutes(alertHandler handlers.AlertHandler) *Routes {
 	router := gin.Default()
+	corsConfig := corsConfig()
+	router.Use(cors.New(corsConfig))
 	router.Use(middleware.FirebaseAuth())
 
 	routes := &Routes{alertHandler: alertHandler, router: router}
@@ -32,5 +37,19 @@ func (r *Routes) addAlertRoutes() {
 		userGroup.GET("/:id", r.alertHandler.FindById)
 		userGroup.PUT("/:id", r.alertHandler.Update)
 		userGroup.DELETE("/:id", r.alertHandler.Delete)
+	}
+}
+
+func corsConfig() cors.Config {
+	return cors.Config{
+		// Allow BOTH forms that the browser may send
+		AllowOrigins: []string{
+			"http://localhost:5173",
+			"http://0.0.0.0:5173",
+		},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
 	}
 }

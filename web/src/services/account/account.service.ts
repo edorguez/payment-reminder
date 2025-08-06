@@ -1,24 +1,22 @@
 import { http } from '../../utils/http';
 import type { UserDto } from './account.types';
 
-const accountUrl: string = import.meta.env.VITE_API_BASE_URL;
+const accountUrl: string = import.meta.env.VITE_API_ACCOUNT_URL;
 
 export const accountService = {
-  getUser: (): Promise<UserDto> => http(accountUrl),
-
-  getUsers: (params: { email?: string; firebaseId?: string }): Promise<UserDto> => {
+  getUser: (params: { email?: string; firebaseId?: string }): Promise<UserDto> => {
     const sp = new URLSearchParams();
     if (params.email) sp.set('email', params.email);
     if (params.firebaseId) sp.set('firebaseId', params.firebaseId);
-    return http(`${accountUrl}?${sp.toString()}`);
+    return http(`${accountUrl}/users?${sp.toString()}`);
   },
 
   createUser: (): Promise<UserDto> =>
     http(accountUrl, { method: 'POST' }),
 
   updateUser: (id: string): Promise<UserDto> =>
-    http(`${accountUrl}/${id}`, { method: 'PUT' }),
+    http(`${accountUrl}/users/${id}`, { method: 'PUT' }),
 
   deleteUser: (id: string): Promise<void> =>
-    http(`${accountUrl}/${id}`, { method: 'DELETE' }),
+    http(`${accountUrl}/users/${id}`, { method: 'DELETE' }),
 } as const;
