@@ -7,7 +7,6 @@ import {
 } from 'react';
 import {
   createUserWithEmailAndPassword,
-  getIdToken,
   updateProfile,
   type User,
 } from 'firebase/auth';
@@ -56,19 +55,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const loginGoogle = async () => {
     const userCredential = await signInWithPopup(auth, googleProvider);
-
-    const user = userCredential.user;
-    const firebaseUid = user.uid;
-    const email = user.email;
-    const fullName = user.displayName;
-
-    const idToken = await getIdToken(user);
-
-    console.log({ firebaseUid, email, fullName, idToken });
-
-    const user2 = await accountService.getUser({firebaseId: firebaseUid});
-    console.log('test')
-    console.log(user2);
+    const userEmail = userCredential.user.email;
+    
+    const res = await accountService.getUser({ email: userEmail ?? '' });
+    console.log('existing user', res);
+    if (!res.ok) {
+      if (res.status === 404) {
+        await accountService.createUser();
+      } else {
+        console.error(res.status, res.message);
+      }
+    }
   };
 
   const logout = async () => {
