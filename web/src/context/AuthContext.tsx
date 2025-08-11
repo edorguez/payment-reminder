@@ -21,7 +21,8 @@ import {
 import { accountService } from '../services/account/account.service';
 
 interface AuthContextType {
-  isAuthenticated: boolean;
+  currentUser: User | null;
+  loading: boolean;
   signUp: (email: string, password: string, name: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   loginGoogle: () => Promise<void>;
@@ -31,13 +32,16 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user: User | null) => {
-      setIsAuthenticated(!!user);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setCurrentUser(user);
+      setLoading(false);
     });
-    return unsub;
+
+    return unsubscribe;
   }, []);
 
   const signUp = async (email: string, password: string, name: string) => {
@@ -58,7 +62,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const userEmail = userCredential.user.email;
     
     const res = await accountService.getUser({ email: userEmail ?? '' });
-    console.log('existing user', res);
     if (!res.ok) {
       if (res.status === 404) {
         await accountService.createUser();
@@ -74,7 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, signUp, login, loginGoogle, logout }}
+      value={{ currentUser, loading, signUp, login, loginGoogle, logout }}
     >
       {children}
     </AuthContext.Provider>

@@ -51,7 +51,7 @@ const LoginCard = () => {
             await login(formData.email, formData.password);
             navigate('/dashboard');
         } catch (err) {
-            let message = GetFirebaseErrorMessage(
+            const message = GetFirebaseErrorMessage(
                 err as FirebaseError,
                 t('login.loginError'),
             );

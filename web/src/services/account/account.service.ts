@@ -1,4 +1,3 @@
-// services/account/account.service.ts
 import { api } from '../../utils/axios';
 import { toResult } from '../../utils/api-result';
 import { URLS } from '../../utils/service-url';

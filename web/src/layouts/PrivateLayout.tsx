@@ -2,6 +2,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { IoEarthSharp } from "react-icons/io5";
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
+import UpgradePlanBanner from '../components/common/UpgradePlanBanner';
 
 const PrivateLayout = () => {
   const { t, i18n } = useTranslation('common');
@@ -43,7 +44,7 @@ const PrivateLayout = () => {
                 </button>
               </li>
             </ul>
-          </div>          
+          </div>
           <div className="dropdown dropdown-end">
             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
               <div className="w-10 rounded-full">
@@ -66,7 +67,7 @@ const PrivateLayout = () => {
           </div>
         </div>
       </div>
-
+      <UpgradePlanBanner />
       <main>
         <Outlet />
       </main>

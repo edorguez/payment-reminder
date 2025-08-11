@@ -8,31 +8,31 @@ import { notify } from '../../../lib/toast';
 import { useTranslation } from 'react-i18next';
 
 const GoogleLogin: React.FC = () => {
-    const { t } = useTranslation('common');
-    const navigate = useNavigate();
-    const { loginGoogle } = useAuth();
+  const { t } = useTranslation('common');
+  const navigate = useNavigate();
+  const { loginGoogle } = useAuth();
 
-    const login = async () => {
-        try {
-            await loginGoogle();
-            navigate('/dashboard');
-        } catch (err) {
-            let message = GetFirebaseErrorMessage(
-                err as FirebaseError,
-                t('login.loginError'),
-            );
-            notify.error(message);
-        }
-    };
+  const login = async () => {
+    try {
+      await loginGoogle();
+      navigate('/dashboard');
+    } catch (err) {
+      const message = GetFirebaseErrorMessage(
+        err as FirebaseError,
+        t('login.loginError'),
+      );
+      notify.error(message);
+    }
+  };
 
-    return (
-        <button
-            onClick={login}
-            className="text-2xl rounded-full bg-white p-1 cursor-pointer transition-transform duration-200 hover:scale-120"
-        >
-            <FcGoogle />
-        </button>
-    );
+  return (
+    <button
+      onClick={login}
+      className="text-2xl rounded-full bg-white p-1 cursor-pointer transition-transform duration-200 hover:scale-120"
+    >
+      <FcGoogle />
+    </button>
+  );
 };
 
 export default GoogleLogin;
