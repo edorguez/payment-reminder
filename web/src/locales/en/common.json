@@ -40,6 +40,8 @@
   "dashboard": {
     "upcomingAlerts": "Upcoming Alerts",
     "pausedAlerts": "Paused Alerts",
-    "totalAlerts": "Total Alerts"
+    "totalAlerts": "Total Alerts",
+    "upgradePlanTitle": "Upgrade Plan",
+    "upgradePlanDescription": "Upgrade your plan to get more features and unlimited access"
   }
 }

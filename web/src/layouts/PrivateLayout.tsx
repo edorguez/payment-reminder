@@ -3,11 +3,13 @@ import { IoEarthSharp } from "react-icons/io5";
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import UpgradePlanBanner from '../components/common/UpgradePlanBanner';
+import { useProfile } from '../context/ProfileContext';
 
 const PrivateLayout = () => {
   const { t, i18n } = useTranslation('common');
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const { user } = useProfile();
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
@@ -18,6 +20,7 @@ const PrivateLayout = () => {
     navigate('/login');
   };
 
+    
   return (
     <div className="bg-gray-50 min-h-dvh">
       <div className="navbar bg-base-100 shadow-sm">
@@ -68,6 +71,7 @@ const PrivateLayout = () => {
         </div>
       </div>
       <UpgradePlanBanner />
+      <h1>{user?.Email}</h1>
       <main>
         <Outlet />
       </main>

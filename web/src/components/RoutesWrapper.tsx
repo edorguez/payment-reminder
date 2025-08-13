@@ -6,7 +6,7 @@ const RoutesWrapper = () => {
   const { loading } = useAuth();
 
   if (loading) {
-    return <div>Loading application...</div>;
+    return <div>Loading...</div>;
   }
 
   return <RouterProvider router={router} />;

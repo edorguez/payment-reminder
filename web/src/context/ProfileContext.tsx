@@ -15,12 +15,12 @@ const ProfileContext = createContext<ProfileContextType | null>(null);
 
 export const ProfileProvider = ({ children }: { children: ReactNode }) => {
   const { currentUser, loading: authLoading } = useAuth();
-  const [userProfile, setUserProfile] = useState<UserDto | null>(null);
+  const [user, setUser] = useState<UserDto | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async () => {
     if (!currentUser) {
-      setUserProfile(null);
+      setUser(null);
       setLoading(false);
       return;
     }
@@ -30,15 +30,15 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
       const res = await accountService.getUser({ email: currentUser.email ?? '' });
 
       if (res.ok) {
-        setUserProfile(res.data);
+        setUser(res.data);
       } else {
         notify.error(res.message);
-        setUserProfile(null);
+        setUser(null);
       }
     } catch (error) {
       console.error("Failed to fetch user profile:", error);
       notify.error("Failed to fetch user profile");
-      setUserProfile(null);
+      setUser(null);
     } finally {
       setLoading(false);
     }
@@ -51,7 +51,7 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
   }, [currentUser, authLoading]);
 
   const value = {
-    userProfile,
+    user,
     loading,
     refetchProfile: fetchProfile,
   };
