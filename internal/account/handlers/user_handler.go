@@ -54,10 +54,21 @@ func (h *UserHandler) FindById(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, user)
+	res := UserResponse{
+		ID:              user.ID,
+		FirebaseUID:     user.FirebaseUID,
+		UserPlanID:      user.UserPlanID,
+		Name:            user.Name,
+		Email:           user.Email,
+		LastPaymentDate: user.LastPaymentDate,
+	}
+
+	ctx.JSON(http.StatusOK, res)
 }
 
 func (h *UserHandler) ListOrFind(ctx *gin.Context) {
+	var user *models.User
+	var err error
 	email := ctx.Query("email")
 	firebaseId := ctx.Query("firebaseId")
 
@@ -66,7 +77,7 @@ func (h *UserHandler) ListOrFind(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "only one filter allowed"})
 		return
 	case email != "":
-		user, err := h.service.FindByEmail(ctx, email)
+		user, err = h.service.FindByEmail(ctx, email)
 		if err != nil {
 			var customErr *customerrors.Error
 			if errors.As(err, &customErr) {
@@ -77,9 +88,8 @@ func (h *UserHandler) ListOrFind(ctx *gin.Context) {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		ctx.JSON(http.StatusOK, user)
 	case firebaseId != "":
-		user, err := h.service.FindByFirebaseID(ctx, firebaseId)
+		user, err = h.service.FindByFirebaseID(ctx, firebaseId)
 		if err != nil {
 			var customErr *customerrors.Error
 			if errors.As(err, &customErr) {
@@ -90,12 +100,21 @@ func (h *UserHandler) ListOrFind(ctx *gin.Context) {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-
-		ctx.JSON(http.StatusOK, user)
 	default:
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "either email or firebaseId query param is required"})
 		return
 	}
+
+	res := UserResponse{
+		ID:              user.ID,
+		FirebaseUID:     user.FirebaseUID,
+		UserPlanID:      user.UserPlanID,
+		Name:            user.Name,
+		Email:           user.Email,
+		LastPaymentDate: user.LastPaymentDate,
+	}
+
+	ctx.JSON(http.StatusOK, res)
 }
 
 func (h *UserHandler) FindByFirebaseId(ctx *gin.Context) {
@@ -104,15 +123,10 @@ func (h *UserHandler) FindByFirebaseId(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Firebase ID query param is required"})
 		return
 	}
-
 }
 
 func (h *UserHandler) Update(ctx *gin.Context) {
-	type updateUserRequest struct {
-		UserPlanID int64  `json:"user_plan_id" binding:"required"`
-		Email      string `json:"email" binding:"required"`
-	}
-	var req updateUserRequest
+	var req UpdateUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

@@ -37,7 +37,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setCurrentUser(user);
+      if (user) {
+        try {
+          const idToken = await user.getIdToken();
+
+          const userStatus = await accountService.checkUserStatus(idToken);
+
+          if (userStatus.isAllowed) {
+            // User is valid, set the current user and proceed
+            setCurrentUser(user);
+          } else {
+            // User is not allowed (expired, banned, etc.).
+            // Log them out of Firebase to prevent access.
+            await signOut(auth);
+            setCurrentUser(null);
+            // You might want to show a message to the user here.
+            console.error("User account is not active or has expired.");
+          }
+        } catch (error) {
+          console.error("Error checking user status:", error);
+          await signOut(auth);
+          setCurrentUser(null);
+        }
+      } else {
+        // No user is signed in.
+        setCurrentUser(null);
+      }
       setLoading(false);
     });
 
@@ -60,7 +85,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const loginGoogle = async () => {
     const userCredential = await signInWithPopup(auth, googleProvider);
     const userEmail = userCredential.user.email;
-    
+
     const res = await accountService.getUser({ email: userEmail ?? '' });
     if (!res.ok) {
       if (res.status === 404) {

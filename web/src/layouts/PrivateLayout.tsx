@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import UpgradePlanBanner from '../components/common/UpgradePlanBanner';
 import { useProfile } from '../context/ProfileContext';
+import { USER_PLAN_ID } from '../constants';
 
 const PrivateLayout = () => {
   const { t, i18n } = useTranslation('common');
@@ -70,8 +71,7 @@ const PrivateLayout = () => {
           </div>
         </div>
       </div>
-      <UpgradePlanBanner />
-      <h1>{user?.Email}</h1>
+      { user?.userPlanId === USER_PLAN_ID.BASIC && <UpgradePlanBanner /> }
       <main>
         <Outlet />
       </main>
